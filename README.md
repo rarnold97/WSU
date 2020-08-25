@@ -1,1 +1,1 @@
-# WSU
+# WSU Homework and projects
