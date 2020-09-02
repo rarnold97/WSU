@@ -3,4 +3,4 @@ project(lecture_code_examples)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(lecture_code_examples main.cpp)
+add_executable(lecture_code_examples main.cpp intro_to_language.cpp intro_to_language.h)

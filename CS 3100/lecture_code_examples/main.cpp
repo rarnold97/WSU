@@ -1,85 +1,50 @@
-#include <iostream>
-#include <cstdlib>
-#include <iomanip>
-#include <fstream>
-#include <cassert>
-#include <string>
+#include "intro_to_language.h"
 
 //template for IO_example
-void IO_example() ;
-void IO_manip() ;
-void read_write_textFiles() ;
-void assert_test();
+
 
 using namespace std ;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    //std::cout << "Hello, World!" << std::endl;
+
+    //from the io lectures in the intro to c++ lectures
+
+    //LECTURES 1-3
     //IO_example() ;
     //IO_manip() ;
-    read_write_textFiles() ;
-    return EXIT_SUCCESS;
+    //read_write_textFiles() ;
+
+    //LECTURE 4
+
+    //int value = getValueInRange(-5,5)
+    /**
+     * int mvalue ;
+     * getValueInRange(mvalue,-5,5) ;
+     * cout << "The value retrieved is " <<mvalue <<endl;
+     */
+
+    /** call by reference:
+     * type-name& parameter-name
+     */
+
+    int x = 10 ;
+    int y = 20;
+
+    swapByVal(x,y) ;
+    cout<<"After SwapByVal"<<setw(5)<<x<<setw(5)<<y<<endl ;
+    swapByRef(x,y) ;
+    cout<<"After swapByRef"<<setw(5)<<x<<setw(5)<<y<<endl;
+
+    int mvalue ;
+    getValueInRange(mvalue) ;
+    cout << "The value retrieved is " <<mvalue <<endl;
+
+
+
+    //if using <cstlib>
+    //return EXIT_SUCCESS;
+
+    return 0 ; // 0 is for success
 }
 
-void IO_example() {
-    int i, j ;
-    std::cout << "enter value of x" << std::endl ;
-    std::cin >> i ;
-
-    for (j=0; j<i; j++)
-    {
-        std::cout<< "Welcome to CS 3100" <<std::endl ;
-    }
-}
-
-void IO_manip(){
-    int x = 201 ; 
-    double y = 342.123456789 ; 
-    std::cout << "(" << std::setw(20) << x << ")" << std::endl;
-    std::cout << std::setprecision(8);
-    std::cout<<"("<<std::setw(20)<<y<<")"<<std::endl;
-    std::cout<<std::fixed ;
-    std::cout<<std::setprecision(2);
-    std::cout<<"("<<std::setw(20)<<y<<")"<<std::endl;
-    std::cout<<std::scientific;
-    std::cout<<std::setprecision(2);
-    std::cout<<"("<<std::setw(20)<<y<<")"<<std::endl;
-}
-
-void read_write_textFiles()
-{
-    ifstream input;
-    ofstream output;
-
-    input.open("inputs/inputData.txt");
-
-    assert (!input.fail()) ;
-
-    output.open("outputs/OutputData.txt");
-
-    assert(!output.fail()) ;
-
-    output<<fixed<<setprecision(2);
-
-    double x ;
-    int linectr = 1 ;
-    while(input>>x)
-    {
-        output << x << endl ;
-        cout<<"read line "<< linectr <<endl;
-
-        linectr++ ;
-    }
-    cout<<"finished reading file."<<endl;
-
-    input.close();
-    output.close();
-}
-
-void assert_test()
-{
-    int i = 10 ;
-    assert(i >5) ;
-    cout<<"next bit of code, test passed"<<endl;
-
-}
