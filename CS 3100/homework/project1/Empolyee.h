@@ -23,6 +23,7 @@ public:
     std::string getLastName() const;
 
     friend std::istream& operator>>(std::istream &ins, Employee &person);
+
 private:
     int ID;
     string lastname;
