@@ -25,17 +25,10 @@ Employee::Employee(const Employee &person)
     this->firstname = person.firstname ;
 }
 
-/// destructor does nothing
-Employee::~Employee() {}
-
 /// Getters and Setters.
 void Employee::setFirstName(string first){firstname = std::move(first);}
 void Employee::setLastName(string last) {lastname = std::move(last);}
 void Employee::setID(int IdNum) {ID = IdNum;}
-
-int Employee::getID() const {return this->ID;}
-std::string Employee::getFirstName() const {return this->firstname;}
-std::string Employee::getLastName() const {return this->lastname;}
 
 /// operator overloading
 

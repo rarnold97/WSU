@@ -14,13 +14,13 @@ class Employee{
 public:
     Employee(int IdNum = 11111, std::string last = " lastname", std::string first = "firstname");
     Employee(const Employee &person);
-    ~Employee();
+    ~Employee() = default;
     void setFirstName(string first);
     void setLastName(string last);
     void setID(int IdNum);
-    int getID() const;
-    std::string getFirstName() const;
-    std::string getLastName() const;
+    inline int getID() const {return ID;}
+    inline std::string getFirstName() const {return firstname;}
+    inline std::string getLastName() const {return lastname;}
 
     friend std::istream& operator>>(std::istream &ins, Employee &person);
 
