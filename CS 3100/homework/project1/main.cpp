@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 //#include <vector>
-//#include <sstream>
+#include <sstream>
 #include "Empolyee.h"
 
 //function prototypes
@@ -22,151 +22,144 @@ Menu displayMenu() ;
  * @fun main function, entry point to program assignment 1.
  * @return int 0 for success 1 for failure.
  */
-int main(int argc, char *argv[]) {
+int main() {
     Menu choice ;
     Employee person ;
     //std::vector<Employee> people ;
     std::string filename ;
+    bool moreThanOneRun = false ;
 
-    // check to see if input arguments were provided to main
-    if (argc>0)
-    {
-        filename = std::string(argv[0]) ;
-    }
-    else
-    {
-        filename = "inputs/Small-Database.txt" ;
-    }
+    filename = "Small-Database.txt" ;
 
-    do
-    {
-        choice = displayMenu() ;
+    std::fstream fileIn ;
+    std::ofstream fileOut;
 
-        if (choice == INPUT_RECORD)
-        {
-            std::ofstream fileOut ;
-
-            fileOut.open(filename, std::ios_base::app) ;
-
-            std::cin >> person ;
-
-            fileOut << person;
-
-            fileOut.close() ;
-
-
+    do {
+        if (moreThanOneRun) {
+            std::cout << "\n";
+        } else {
+            moreThanOneRun = true;
         }
-        else if (choice == INPUT_NUMBER_OF_RECORDS)
+
+        choice = displayMenu();
+
+        switch (choice)
         {
-            int nRecords ;
-
-            while(true)
+            case INPUT_RECORD :
             {
-                std::cout << "Enter the Number of Records.  Allowed Range: 1-99."<<std::endl;
-                std::cin >> nRecords ;
 
-                /// make sure a whole number was entered.
-                if (nRecords % 1 != 0 )
-                {
-                    nRecords = (int)nRecords ;
+                fileOut.open(filename, std::ios_base::app);
+
+                std::cin >> person;
+
+                fileOut << person;
+
+                fileOut.close();
+
+                break;
+            }
+            case INPUT_NUMBER_OF_RECORDS : {
+                int nRecords;
+
+                while (true) {
+                    std::cout << "Enter the Number of Records.  Allowed Range: 1-99." << std::endl;
+                    std::cin >> nRecords;
+
+                    /// make sure a whole number was entered.
+                    if (nRecords % 1 != 0) {
+                        nRecords = (int) nRecords;
+                    }
+
+                    if (nRecords < 1 || nRecords > 99) {
+                        std::cout << "Please enter a whole number within the range 1-99 : " << std::endl;
+                    } else {
+                        break;
+                    }
                 }
 
-                if (nRecords <1 || nRecords > 99)
-                {
-                    std::cout << "Please enter a whole number within the range 1-99 : " <<std::endl;
+                fileOut.open(filename, std::ios_base::app | std::ios_base::out);
+
+                for (int i = 0; i < nRecords; i++) {
+                    Employee p;
+                    std::cin >> p;
+                    fileOut << p << std::endl;
+                    std::cout << p;
                 }
-                else
-                {
-                    break ;
+
+                fileOut.close();
+
+                break;
+            }
+            case TWO_RECORDS_TEST_EMPLOYEE : {
+                Employee p1, p2;
+
+                std::cin >> p1;
+                std::cin >> p2;
+
+                if (p1 == p2) {
+                    std::cout << "The two employees are the same/equal." << std::endl;
+                } else {
+                    std::cout << "The two employees are NOT the same/equal." << std::endl;
                 }
+
+                break;
             }
-
-            std::ofstream fileOut ;
-            fileOut.open(filename, std::ios_base::app) ;
-
-            for (int i = 0 ; i < nRecords; i++)
+            case TWO_RECORDS_TEST_ID :
             {
-                Employee p ;
-                std::cin >> p ;
-                fileOut << p ;
-                std::cout << p ;
-                //people.push_back(p) ;
-            }
+                Employee p1, p2, testEmployee;
+                char nLine ;
 
-            fileOut.close() ;
-        }
-        else if (choice == TWO_RECORDS_TEST_EMPLOYEE)
-        {
-            Employee p1, p2 ;
+                fileIn.open(filename.c_str()) ;
 
-            std::cin >> p1 ;
-            std::cin >> p2 ;
+                std::string first1, first2, last1, last2, idNum1, idNum2 ;
+                fileIn >> last1 ;
+                fileIn >> first1 ;
+                fileIn >> idNum1 ;
 
-            if (p1 == p2)
-            {
-                std::cout<< "The two employees are the same/equal."<<std::endl;
-            }
-            else
-            {
-                std::cout<< "The two employees are NOT the same/equal."<<std::endl;
-            }
+                fileIn >> last2 ;
+                fileIn >> first2 ;
+                fileIn >> idNum2 ;
 
-        }
-        else if (choice == TWO_RECORDS_TEST_ID)
-        {
-            Employee p1, p2, testEmployee ;
+                fileIn >> nLine ;
 
-            std::cin >> p1 ;
-            std::cin >> p2 ;
+                std::stringstream id1_str(idNum1);
+                std::stringstream id2_str(idNum2);
 
-            if (p1<p2)
-            {
-                std::cout << "Employee: " << p1.getFirstName() << " " << p1.getLastName()
-                << " has an ID number of " << p1.getID() << " Which is LESS than " <<
-                "Employee: "<<p2.getFirstName() << " " << p2.getLastName() << " who has an ID number of: "
-                <<p2.getID() << std::endl;
-            }
-            else
-            {
-                std::cout << "Employee: " << p1.getFirstName() << " " << p1.getLastName()
-                << " has an ID number of " << p1.getID() << " Which is GREATER than " <<
-                "Employee: "<<p2.getFirstName() << " " << p2.getLastName() << " who has an ID number of: "
-                <<p2.getID() << std::endl;
-            }
+                int id1, id2 ;
 
-            /*
-            std::ifstream fileIn ;
-            fileIn.open(filename) ;
-            std::string line ;
-            std::vector<std::string> entries ;
-            const char delim = ' ' ;
+                id1_str >> id1 ;
+                id2_str >> id2 ;
 
-            while(fileIn)
-            {
-                std::getline(fileIn, line) ;
-                // split the string using the delimiter " "
-                std::stringstream data(line) ;
-                std::string s ;
-                while(std::getline(data,s, delim))
-                {
-                    entries.push_back(s) ;
+                p1.setLastName(last1);
+                p1.setFirstName(first1);
+                p1.setID(id1) ;
+
+                p2.setLastName(last2) ;
+                p2.setFirstName(first2);
+                p2.setID(id2) ;
+
+                if (p1 < p2) {
+                    std::cout << "Employee: " << p1.getFirstName() << " " << p1.getLastName()
+                              << " has an ID number of " << p1.getID() << " Which is LESS than " <<
+                              "Employee: " << p2.getFirstName() << " " << p2.getLastName()
+                              << " who has an ID number of: "
+                              << p2.getID() << std::endl;
+                } else {
+                    std::cout << "Employee: " << p1.getFirstName() << " " << p1.getLastName()
+                              << " has an ID number of " << p1.getID() << " Which is GREATER than " <<
+                              "Employee: " << p2.getFirstName() << " " << p2.getLastName()
+                              << " who has an ID number of: "
+                              << p2.getID() << std::endl;
                 }
-                testEmployee.setLastName(entries[0]) ;
-                testEmployee.setFirstName(entries[1]) ;
-                std::stringstream idStream(entries[2]) ;
 
-                int id ;
-                idStream >> id ;
-                testEmployee.setID(id) ;
-
+                fileIn.close() ;
+                break;
+            }
+            case INVALID_ENTRY :
+            {
+                std::cout << "Please enter a valid option choice in the range: 0-4" << std::endl;
             }
 
-             fileIn.close();
-             */
-        }
-        else if (choice == INVALID_ENTRY)
-        {
-            std::cout<<"Please enter a valid option choice in the range: 0-4" << std::endl;
         }
     }
     while (choice != QUIT) ;
@@ -183,10 +176,10 @@ Menu displayMenu()
     // display menu items
     std::cout << "Please enter one of the following options: " << std::endl;
     std::cout << "0 - Enter an employee record and write to text file." << std::endl;
-    std::cout << "1 - Read a number of employee records from database file, "
-                 "then display to screen and write to output text file." << std::endl ;
+    std::cout << "1 - Read a number of employee records from keyboard, "
+                 "then display to screen and write to output database file." << std::endl ;
     std::cout << "2 - Read two employee records from keyboard to test if they are equal." <<std::endl;
-    std::cout << "3 - Read two employee records from keyboard to compare their ID numbers." << std::endl;
+    std::cout << "3 - Read two employee records from database file to compare their ID numbers." << std::endl;
     std::cout << "4 - QUIT."<< std::endl;
 
     //read in user choice
@@ -202,6 +195,7 @@ Menu displayMenu()
             break;
         case 2:
             choice = TWO_RECORDS_TEST_EMPLOYEE;
+            break ;
         case 3:
             choice = TWO_RECORDS_TEST_ID;
             break;
