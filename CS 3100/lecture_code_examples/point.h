@@ -21,6 +21,9 @@ public:
     // constant member getters
     inline double get_x() const {return x;}
     inline double get_y() const  {return y;}
+
+    // stream insertion operator overload
+    friend std::istream& operator>>(std::istream& ins, point& target);
     // destructor
     ~point();
 private:
@@ -30,5 +33,10 @@ private:
 
 // operator overload
 bool operator==(const point& p1, const point& p2);
+point operator +(const point& p1, const point& p2);
+bool operator != (const point& p1, const point&p2);
+std::ostream& operator <<(std::ostream& outs, const point &source);
+point middle(const point p1, const point p2) ; 
+double distance(const point& p1, const point& p2);
 
 #endif //LECTURE_CODE_EXAMPLES_POINT_H
