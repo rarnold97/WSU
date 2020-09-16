@@ -86,5 +86,3 @@ std::istream& operator>>(std::istream &ins, Employee &person)
 
     return ins ;
 }
-
-

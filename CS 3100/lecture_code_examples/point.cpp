@@ -46,19 +46,49 @@ bool operator==(const point& p1, const point& p2)
     && p1.get_y() == p2.get_x() ;
 }
 
-// class as return value
-
-point middle(const point& p1, const point& p2)
+bool operator !=(const point& p1, const point& p2)
 {
-    double x_midpoint, y_midpoint ;
-
-    x_midpoint = (p1.get_x() + p2.get_x()) / 2 ;
-    y_midpoint = (p1.get_y() + p2.get_y()) / 2 ;
-
-    // return a new point that contains the midpoint
-    point midpoint(x_midpoint, y_midpoint) ;
-    return midpoint ;
+    return !(p1 == p2) ;
 }
 
+point operator +(const point& p1, const point& p2)
+{
+    double x_sum, y_sum ; 
 
+    x_sum = p1.get_x() + p2.get_x() ; 
+    y_sum = p1.get_y() + p2.get_y();
 
+    point sum(x_sum, y_sum);
+    return sum ; 
+}
+
+std::ostream& operator <<(std::ostream& outs, const point& source)
+{
+    outs<< source.get_x() << " " << source.get_y() ; 
+}
+//
+
+point middle(const point p1, const point p2)
+{
+    double new_x = (p1.get_x() + p2.get_x())/2;
+    double new_y = (p2.get_y() + p2.get_y())/2;
+
+    new_point = point(new_x, new_y) ;
+    return new_point ; 
+}
+
+double distance(const point& p1, const point& p2)
+{
+    double distance;
+
+    double x_dist = std::pow((p2.get_x() - p1.get_x(), 2) ; 
+    double y_dist = std::pow(p2.get_y(), - p1.get_y(), 2 ) ; 
+
+    distance = std::sqrt(x_dist+y_dist) ; 
+    return distance ; 
+}
+
+std::istream& operator>>(std::istream& ins, point& target)
+{
+    ins>> point.x >> point.y ; 
+}
