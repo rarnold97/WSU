@@ -4,6 +4,7 @@
 
 //template for IO_example
 int pointClassDemo() ;
+int pointer_example() ;
 
 using namespace std ;
 
@@ -45,7 +46,10 @@ int main() {
      */
 
 
-    pointClassDemo() ;
+    //pointClassDemo() ;
+
+    // LECTURE 6
+    pointer_example() ;
 
     //if using <cstlib>
     //return EXIT_SUCCESS;

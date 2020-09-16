@@ -3,4 +3,13 @@ project(lecture_code_examples)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(lecture_code_examples main.cpp intro_to_language.cpp intro_to_language.h point.h point.cpp)
+include_directories(.)
+
+add_executable(lecture_code_examples
+        inputs/inputData.txt
+        outputs/OutputData.txt
+        intro_to_language.cpp
+        intro_to_language.h
+        main.cpp
+        point.cpp
+        point.h pointer.cpp)

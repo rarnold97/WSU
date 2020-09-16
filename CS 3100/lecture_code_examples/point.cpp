@@ -45,5 +45,20 @@ bool operator==(const point& p1, const point& p2)
     return p1.get_x() == p2.get_x()
     && p1.get_y() == p2.get_x() ;
 }
-//
+
+// class as return value
+
+point middle(const point& p1, const point& p2)
+{
+    double x_midpoint, y_midpoint ;
+
+    x_midpoint = (p1.get_x() + p2.get_x()) / 2 ;
+    y_midpoint = (p1.get_y() + p2.get_y()) / 2 ;
+
+    // return a new point that contains the midpoint
+    point midpoint(x_midpoint, y_midpoint) ;
+    return midpoint ;
+}
+
+
 
