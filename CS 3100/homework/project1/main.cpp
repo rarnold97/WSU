@@ -19,35 +19,50 @@
 Menu displayMenu() ;
 
 /**
+ * skips n lines from the beginning of a text file so that another employee can be tested.
+ *
+ */
+void skipLines(std::istream &is, size_t n, char delim) ;
+
+/**
  * @fun main function, entry point to program assignment 1.
  * @return int 0 for success 1 for failure.
  */
 int main() {
+    // initialize variables
     Menu choice ;
     Employee person ;
-    //std::vector<Employee> people ;
     std::string filename ;
     bool moreThanOneRun = false ;
 
+    // set the name of the input file
     filename = "Small-Database.txt" ;
 
+    // filestream operators
     std::fstream fileIn ;
     std::ofstream fileOut;
 
+    //counter for the lines of the data base files
+    size_t lineCtr = 0 ;
+
     do {
+        // make the output look nice by inserting a newline
+        // makes the terminal less cluttered
         if (moreThanOneRun) {
             std::cout << "\n";
         } else {
             moreThanOneRun = true;
         }
 
+        // instantiate the enum for the menu choices
         choice = displayMenu();
 
+        // switch the choice based on what the user selects based on an enum
         switch (choice)
         {
-            case INPUT_RECORD :
+            case INPUT_RECORD :  // input a record, write to database
             {
-
+                // open the file to insert the employees
                 fileOut.open(filename, std::ios_base::app);
 
                 std::cin >> person;
@@ -58,10 +73,13 @@ int main() {
 
                 break;
             }
-            case INPUT_NUMBER_OF_RECORDS : {
+            case INPUT_NUMBER_OF_RECORDS : // variable number of records, write to file
+            {
                 int nRecords;
 
+                // break while loop after condition
                 while (true) {
+                    // prompt user
                     std::cout << "Enter the Number of Records.  Allowed Range: 1-99." << std::endl;
                     std::cin >> nRecords;
 
@@ -69,20 +87,25 @@ int main() {
                     if (nRecords % 1 != 0) {
                         nRecords = (int) nRecords;
                     }
-
-                    if (nRecords < 1 || nRecords > 99) {
+                    // define bounds of number of records
+                    if (nRecords < 1 || nRecords > 99)
+                    {
                         std::cout << "Please enter a whole number within the range 1-99 : " << std::endl;
-                    } else {
-                        break;
+                    }
+                    else
+                    {
+                        break; // exit the while
                     }
                 }
 
+                // open the file and append to it
                 fileOut.open(filename, std::ios_base::app | std::ios_base::out);
 
-                for (int i = 0; i < nRecords; i++) {
+                for (int i = 0; i < nRecords; i++)
+                {
                     Employee p;
                     std::cin >> p;
-                    fileOut << p << std::endl;
+                    fileOut << p ;
                     std::cout << p;
                 }
 
@@ -90,7 +113,8 @@ int main() {
 
                 break;
             }
-            case TWO_RECORDS_TEST_EMPLOYEE : {
+            case TWO_RECORDS_TEST_EMPLOYEE :
+            {
                 Employee p1, p2;
 
                 std::cin >> p1;
@@ -110,17 +134,40 @@ int main() {
                 char nLine ;
 
                 fileIn.open(filename.c_str()) ;
+                skipLines(fileIn, lineCtr,'\n') ;
 
                 std::string first1, first2, last1, last2, idNum1, idNum2 ;
-                fileIn >> last1 ;
+                if (!(fileIn >> last1))
+                    {
+                        //clear file buffer
+                        fileIn.clear();
+                        //go back to beginning of file
+                        fileIn.seekg(0);
+                        lineCtr =0 ;
+
+                        fileIn>>last1 ;
+                    }
+
                 fileIn >> first1 ;
                 fileIn >> idNum1 ;
 
-                fileIn >> last2 ;
+                if (!(fileIn >> last2))
+                {
+                    //clear file buffer
+                    fileIn.clear();
+                    //go back to beginning of file
+                    fileIn.seekg(0);
+                    lineCtr =0 ;
+
+                    fileIn >> last2 ;
+                }
+
                 fileIn >> first2 ;
                 fileIn >> idNum2 ;
 
                 fileIn >> nLine ;
+
+                lineCtr++ ;
 
                 std::stringstream id1_str(idNum1);
                 std::stringstream id2_str(idNum2);
@@ -185,6 +232,7 @@ Menu displayMenu()
     //read in user choice
     std::cin >> userChoice ;
 
+    // enumerate choice based on entered number
     switch(userChoice)
     {
         case 0:
@@ -208,4 +256,17 @@ Menu displayMenu()
     }
     // return what the user selected.
     return choice ;
+}
+
+
+void skipLines(std::istream & is, size_t n, char delim)
+{
+    // declare the size of the file based on input
+    size_t i = 0 ;
+    while(i++ < n)  // skip n lines
+    {
+        // skip number of lines with a buffer of 80 characters
+        // will stop skipping at newline delimiter
+        is.ignore(80, delim) ;
+    }
 }
