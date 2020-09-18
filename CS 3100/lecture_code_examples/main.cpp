@@ -5,6 +5,9 @@
 //template for IO_example
 int pointClassDemo() ;
 int pointer_example() ;
+void allocate_doubles(double*& p, size_t& n);
+double average(const double data[], size_t m, double value);
+void deallocate(const double data[], size_t n);
 
 using namespace std ;
 

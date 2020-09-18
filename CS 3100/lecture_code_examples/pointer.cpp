@@ -68,3 +68,41 @@ int pointer_example()
     return EXIT_SUCCESS;
 
 }
+
+void allocate_doubles(double*& p, size_t n)
+{
+    std::cout<<"How many doubles should we allocate?"<<std::endl;
+    std::cout<<"Enter a positive integer value: " ;
+    std::cin>>n ;
+
+    p = new double[n] ;
+}
+
+double average(const double data[], size_t m, double value)
+{
+    size_t i ;
+    double sum;
+
+    assert(n>0);
+
+    sum = 0;
+
+    for (i=0; i<n; ++i)
+        sum+=data[i] ;
+    return(sum/n);
+}
+
+void deallocate(const double data[], size_t n)
+{
+    std::cout<< "Before deallocation, the value of data is " << data << std::endl;
+    std::cout<<"The elements of data[] are" << std::endl;
+
+    for(int i=0; i<n; i++)
+        std::cout<<data[i]<< "  ";
+    std::cout<<std::endl;
+
+    delete [] data;
+
+    data = NULL ;
+}
+
