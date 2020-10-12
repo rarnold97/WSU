@@ -6,6 +6,9 @@ Project 2: Array Based Stack
 
 --- How to operate Ryan Arnold's stack project ---
 
+Prep:
+-Make sure to pass in 'all.last.txt' as the file arguement for the file reader.  defaulted to 'all.last.txt'
+
 Explanation of interface:
 
 -instantiated as follows:
