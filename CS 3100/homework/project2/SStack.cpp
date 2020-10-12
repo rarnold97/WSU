@@ -110,6 +110,7 @@ SStack operator +(const SStack& s1, const SStack& s2)
     SStack reverseStack1 = SStack(tmpStack1.getCapacity());
     SStack reverseStack2 = SStack(tmpStack2.getCapacity());
 
+    // need to reverse the stacks in order to follow last in first out principle
     while(!tmpStack1.IsEmpty()) reverseStack1.push(tmpStack1.pop()) ;
     while(!tmpStack2.IsEmpty()) reverseStack2.push(tmpStack2.pop()) ;
 
