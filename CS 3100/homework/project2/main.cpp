@@ -114,6 +114,7 @@ int main() {
     mergedStack.print();
 
     std::cout <<"-----End of Stack Testing-----"<<std::endl;
+    //system("pause");
     return 0;
 }
 
