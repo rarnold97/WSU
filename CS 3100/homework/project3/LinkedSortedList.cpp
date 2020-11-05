@@ -14,7 +14,7 @@ LinkedSortedList::LinkedSortedList()
 }
 
 //Copy Constructor
-LinkedSortedList::LinkedSortedList(Node* head0, int n)
+LinkedSortedList::LinkedSortedList(Node* &head0, int n)
 {
     head = head0 ;
     nodeCount = n ;
@@ -234,28 +234,69 @@ LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2)
         //must return the other list if one runs out
         if (h1==NULL)
         {
-            tail->next = h2;
+            Node* oldhead2 = h2;
+
+            while(oldhead2 != NULL)
+            {
+                Node* tmp = new Node;
+
+                tmp->value = oldhead2->value;
+                tail->next = tmp ;
+                oldhead2 = oldhead2 ->next;
+                tail = tail->next;
+            }
+            //tail->next = h2;
             break;
         }
         else if (h2==NULL)
         {
-            tail->next=h1;
+            Node* oldhead1 = h1;
+
+            while(oldhead1 != NULL)
+            {
+                Node* tmp = new Node;
+
+                tmp->value = oldhead1->value;
+                tail->next = tmp ;
+                oldhead1 = oldhead1 ->next;
+                tail = tail->next;
+            }
+
+            //tail->next=h1;
             break;
         }
         if (h1->value <= h2->value)
         {
+            Node* tmp = new Node;
+            Node* newNode = h1;
+
+
+            tmp->value = newNode->value;
+            tail->next = tmp;
+            h1 = newNode->next ;
+
+
+            /*
             Node* newNode = h1 ;
             h1 = newNode->next ;
             newNode->next = tail->next;
             tail->next = newNode;
+             */
         }
         else
         {
+            Node* tmp = new Node;
+            Node* newNode = h2;
 
+            tmp->value = newNode->value;
+            tail->next = tmp;
+            h2 = newNode->next ;
+            /*
             Node* newNode = h2 ;
             h2 = newNode->next ;
             newNode->next = tail->next;
             tail->next = newNode;
+             */
 
         }
 
