@@ -22,7 +22,10 @@ private:
 
 public:
 	// Constructor
-	LinkedSortedList(); 
+	LinkedSortedList();
+
+	//Copy Constructor
+	LinkedSortedList(Node* head0, int n);
 
 	// Destructor
 	~LinkedSortedList(); 
@@ -54,9 +57,16 @@ public:
     // this function cannot change the contents of the sorted linked list.
 	void print() const;
 
+    //return the head of the sorted linked list
+    Node* getHead() const;
+
+	void setHead(Node* newHead) ;
+
 };
 
 //Merge two sorted linked list into one sorted linked list, and return the head of the merged sorted linked list. 
 LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2);
+
+Node* Merge(Node* h1, Node* h2) ;
 
 #endif
