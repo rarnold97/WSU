@@ -1,3 +1,11 @@
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+November. 9, 2020
+Project 3: Linked Sorted List
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -72,14 +80,39 @@ int main() {
     Node* head1 = list1.getHead(); Node* head2 = list2.getHead();
 
     Node* mergedHead = MergeLinkedSortedList(head1, head2) ;
-    //int mergeSize = list1.size() + list2.size() ;
-    //LinkedSortedList mergedList(mergedHead, mergeSize) ;
-    //mergedList.print() ;
-    //cout<<endl;
+    int mergeSize = list1.size() + list2.size() ;
+    //although mergedHead is dynamic, we pass to the copy constructor
+    //by reference, so the destructor of the merged list frees the heap
+    //memory
+    LinkedSortedList mergedList(mergedHead, mergeSize) ;
+    mergedList.print() ;
+    cout<<endl;
 
     cout<<"Clearing List 2:"<<endl;
     list2.clear();
     list2.print();
+    cout<<endl;
+
+    //testing the merge where one of the lists has a single element
+    cout<<"Testing the Merge function, where one of the two lists/heads only contains a single element! (SHINJI)"<<endl;
+    cout<<endl;
+
+    LinkedSortedList list3 ;
+    list3.insert(string("GON"));
+    list3.insert(string("FREECS"));
+    list3.insert(string("IZUMI"));
+    list3.insert(string("KANEKI"));
+    list3.insert(string("BELMONT"));
+
+    LinkedSortedList list4;
+    list4.insert(string("SHINJI"));
+
+    Node* head3 = list3.getHead(); Node* head4 = list4.getHead();
+
+    Node* mergedHead2 = MergeLinkedSortedList(head3, head4) ;
+    int nMerge = list3.size() + list4.size();
+    LinkedSortedList mergedList2(mergedHead2, nMerge);
+    mergedList2.print();
     cout<<endl;
 
     return 0;

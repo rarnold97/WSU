@@ -1,3 +1,11 @@
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+November. 9, 2020
+Project 3: Linked Sorted List
+*/
+
 //LinkedSortedList.h
 
 //Definition of a sorted linked list, Provided by Meilin Liu, Fall 2020
@@ -25,7 +33,7 @@ public:
 	LinkedSortedList();
 
 	//Copy Constructor
-	LinkedSortedList(Node* head0, int n);
+	LinkedSortedList(Node* &head0, int n);
 
 	// Destructor
 	~LinkedSortedList(); 
@@ -60,13 +68,9 @@ public:
     //return the head of the sorted linked list
     Node* getHead() const;
 
-	void setHead(Node* newHead) ;
-
 };
 
 //Merge two sorted linked list into one sorted linked list, and return the head of the merged sorted linked list. 
 LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2);
-
-Node* Merge(Node* h1, Node* h2) ;
 
 #endif

@@ -1,6 +1,11 @@
-//
-// Created by ryanarnold on 10/22/20.
-//
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+November. 9, 2020
+Project 3: Linked Sorted List
+*/
+
 #include "LinkedSortedList.h"
 
 #include <utility>
@@ -14,6 +19,7 @@ LinkedSortedList::LinkedSortedList()
 }
 
 //Copy Constructor
+//pass the prescribed head by reference to avoid memory issues
 LinkedSortedList::LinkedSortedList(Node* &head0, int n)
 {
     head = head0 ;
@@ -28,15 +34,6 @@ LinkedSortedList::~LinkedSortedList()
 // Return the number of the elements in the sorted linked list
 int LinkedSortedList::size() const
 {
-    /**
-    int n = 0;
-    Node* current = head ;
-    if(head == NULL) return n ;
-
-    while(current->next != NULL) ++n;
-
-    return n + 1 ;
-    **/
     return nodeCount ;
 }
 
@@ -158,6 +155,7 @@ void LinkedSortedList::print() const
 {
     if (head == NULL)
     {
+        cout<<"NULL"<<endl;
         cout << "Sorted Linked List has no contents!"<<endl;
         return;
     }
@@ -171,54 +169,9 @@ void LinkedSortedList::print() const
     }
     current->print();
     cout<<endl;
-    cout<<"NULL"<<endl ;
+    //cout<<"NULL"<<endl ;
 
 }
-
-/*
-Node* Merge(Node* h1, Node* h2)
-{
-    // we assume here that the first value of h1 is less than h2, handled in the driver function
-    if (h1->next == NULL)
-    {
-        h1->next = h2;
-        return h1;
-    }
-
-    Node* oldHead1 = h1;
-    Node* oldNext1 = h1->next;
-    Node* oldHead2 = h2;
-    Node* oldNext2 = h2->next;
-
-    while (oldNext1 && oldHead2)
-    {
-        if ((oldHead2->value >= oldHead1->value) && (oldHead2->value <= oldNext1->value))
-        {
-            oldNext2 = oldHead2->next ;
-            oldHead1->next = oldHead2 ;
-            oldHead2->next = oldNext1 ;
-
-            oldHead1 = oldHead2 ;
-            oldHead2 = oldNext2 ;
-        }
-        else
-        {
-            if (oldNext1->next != NULL)
-            {
-                oldNext1 = oldNext1->next;
-                oldHead1 = oldHead1->next;
-            }
-            else
-            {
-                oldNext1->next = oldHead2;
-                return h1 ;
-            }
-        }
-    }
-
-    return h1;
-}
-*/
 
 LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2)
 {
@@ -226,6 +179,7 @@ LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2)
     Node dummy;
     Node* tail = &dummy;
 
+    //make copies of the input heads to traverse without actually moving originals
     Node* h1 = head1 ;
     Node* h2 = head2 ;
 
@@ -234,22 +188,27 @@ LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2)
         //must return the other list if one runs out
         if (h1==NULL)
         {
+            //copy again to traverse from current head position
             Node* oldhead2 = h2;
-
+            //go throught the remainer of the head
             while(oldhead2 != NULL)
             {
+                // create a new node to copy the merge data
                 Node* tmp = new Node;
-
+                //assign the value of the oldhead to copy
                 tmp->value = oldhead2->value;
+                //append to the tail
                 tail->next = tmp ;
+                //advance the oldhead and the tail
                 oldhead2 = oldhead2 ->next;
                 tail = tail->next;
             }
-            //tail->next = h2;
+            //break main control loop
             break;
         }
         else if (h2==NULL)
         {
+            //same as previous for head 1
             Node* oldhead1 = h1;
 
             while(oldhead1 != NULL)
@@ -262,99 +221,39 @@ LinkedNode* MergeLinkedSortedList(LinkedNode *head1, LinkedNode *head2)
                 tail = tail->next;
             }
 
-            //tail->next=h1;
             break;
         }
+        //case where the current value of head1 is less than head 2.
+        //we extract this value and advance head 1 one position
         if (h1->value <= h2->value)
         {
+            //create a new node to copy data to
             Node* tmp = new Node;
+            //make a copy to traverse h1 from current position
             Node* newNode = h1;
-
-
+            //write value to new node
             tmp->value = newNode->value;
+            //append to tail
             tail->next = tmp;
+            //advance the tail
             h1 = newNode->next ;
-
-
-            /*
-            Node* newNode = h1 ;
-            h1 = newNode->next ;
-            newNode->next = tail->next;
-            tail->next = newNode;
-             */
         }
         else
         {
+            //same logic as before, except head 2 is less
             Node* tmp = new Node;
             Node* newNode = h2;
 
             tmp->value = newNode->value;
             tail->next = tmp;
             h2 = newNode->next ;
-            /*
-            Node* newNode = h2 ;
-            h2 = newNode->next ;
-            newNode->next = tail->next;
-            tail->next = newNode;
-             */
-
         }
-
+        //advance tail
         tail = tail->next ;
     }
-
+    //create output node, we take dummy.next, since dummy's 0th value is empty
     Node* mergedHead = dummy.next ;
     return mergedHead ;
-    /*
-    if (h1 == NULL) return h2;
-    if (h2 == NULL) return h1;
-
-    Node* mergedHead ;
-    if (h1->value <= h2->value)
-    {
-        mergedHead = h1 ;
-        h1 = h1->next ;
-    }
-    else
-    {
-        mergedHead = h2;
-        h2 = h2->next;
-    }
-
-    Node* mergedHead2 = mergedHead;
-
-    while(h1 != NULL && h2 != NULL)
-    {
-        Node* tmp ;
-        if (h1->value <= h2->value)
-        {
-            tmp = h1;
-            h1 = h1->next;
-        }
-        else
-        {
-            tmp = h2 ;
-            h2 = h2->next;
-        }
-
-        mergedHead2->next = tmp ;
-        mergedHead2 = tmp ;
-        //mergedHead2 = mergedHead2->next ;
-    }
-
-    if (h1 != NULL)
-    {
-        mergedHead2->next = h1 ;
-    }
-    else if (head2 != NULL)
-    {
-        mergedHead2->next = h2 ;
-    }
-
-    return mergedHead ;
-     */
-    //if (h1->value < h2->value) return Merge(h1, h2);
-    //else return Merge(h2, h1);
 }
 
 // custom added functions to manage the head
@@ -362,5 +261,3 @@ Node* LinkedSortedList::getHead() const
 {
     return head ;
 }
-
-void LinkedSortedList::setHead(Node *newHead) {head = newHead;}
