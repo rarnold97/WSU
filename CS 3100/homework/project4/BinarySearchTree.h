@@ -79,8 +79,13 @@ public:
         bool print(); // using inorder tree traversal
         bool save(); // using inorder tree traversal
 
+        Iterator begin() ;
+        Iterator end() ;
+
         BinaryTreeNode* getRoot() const;
         BinaryTreeNode* getRightMost(BinaryTreeNode*);
+
+        BinaryTreeNode* findSuccessor(const BinaryTreeNode*);
 
         void expandExternal(Employee& E, Node* btn);
         Node* removeAboveExternal(Node* btn);

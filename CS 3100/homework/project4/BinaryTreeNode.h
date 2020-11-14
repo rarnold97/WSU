@@ -18,6 +18,7 @@ public:
     BinaryTreeNode(Employee &newEmployee ,  BinaryTreeNode * rightptr = NULL, BinaryTreeNode *leftptr = NULL);
 	// copy constructor
 	BinaryTreeNode(BinaryTreeNode* btn);
+    BinaryTreeNode(const BinaryTreeNode* btn);
     ~BinaryTreeNode();
 
     BinaryTreeNode * left;

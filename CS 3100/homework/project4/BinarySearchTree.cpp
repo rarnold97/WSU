@@ -18,6 +18,11 @@ bool save(); // using inorder tree traversal
 typedef BinaryTreeNode Node;
 typedef BinarySearchTree::Iterator Iterator;
 
+BinarySearchTree::BinarySearchTree()
+{
+    root = NULL;
+    size = 0;
+}
 
 int BinarySearchTree::BSTsize(){return size;}
 
@@ -40,8 +45,8 @@ void BinarySearchTree::expandExternal(Employee& E, Node* btn){
 }
 
 Node* BinarySearchTree::removeAboveExternal(Node* btn) {
-    Node* w = btn; Node* v = w->getParent();
-    Node* sib = (w == v->getLeft() ? v->getRight() : v->getLeft());
+    Node* w = btn; Node* v = w->par;
+    Node* sib = (w == v->left ? v->right : v->left);
     if (v == root){
         root = sib ;
         sib->par = NULL;
@@ -61,10 +66,11 @@ Node* BinarySearchTree::removeAboveExternal(Node* btn) {
 
 Node * BinarySearchTree::getRightMost(Node* btn)
 {
-    Node* tmp = new Node(btn) ;
+    Node* tmp = btn ->right ;
     while (tmp->right != NULL) tmp = tmp->right;
     return tmp ;
 }
+
 //successor
 Iterator& Iterator::operator++()
 {
@@ -84,9 +90,84 @@ Iterator& Iterator::operator++()
     return *this ;
 }
 
-bool BinarySearchTree::insert(Employee& E)
+Iterator BinarySearchTree::begin()
 {
-    Node* tmp = root;
+
+    if (root == NULL){
+        Iterator out(NULL);
+        return out ;
+    }
+    Node* v = root;
+    while(v->isInternal()) v = v->left;
+    Iterator out(v) ;
+    return out ;
+}
+
+Iterator BinarySearchTree::end()
+{
+    Node* v = BinarySearchTree::getRightMost(root);
+    Iterator out(v) ;
+    return out ;
 
 }
 
+bool BinarySearchTree::insert(Employee& E)
+{
+
+    Node* v = root;
+    Node* w = new Node(E) ;
+
+    while (v->isInternal())
+    {
+        if (w > v)
+        {
+            v = v->right;
+        }
+        else if (w < v)
+        {
+            v = v->left;
+        }
+        else
+        {
+            std::cout<<"No Duplicates allowed!"<<std::endl;
+            return false;
+        }
+    }
+
+    if (w > v)
+    {
+        v->right = w ;
+    }
+    else if (w < v)
+    {
+        v->left = w ;
+    }
+    else
+    {
+        std::cout<<"No Duplicates allowed!"<<std::endl;
+        return false;
+    }
+
+    return true; //finished successfully
+}
+
+
+Node* BinarySearchTree::findSuccessor(const BinaryTreeNode *node_in)
+{
+    Node* w = node_in->right ;
+
+    if (w->isInternal()){
+        do {w = w->left;}
+        while(w->isInternal());
+    }
+    else{
+        w = node_in->par;
+        Node* tmp = new Node(node_in);
+        while(tmp == w->right)
+        {tmp=w; w = w->par;}
+        //will be null if rightmost node
+        delete tmp;
+    }
+
+    return w ;
+}

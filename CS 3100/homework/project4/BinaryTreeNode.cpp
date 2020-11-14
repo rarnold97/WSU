@@ -30,3 +30,10 @@ BinaryTreeNode::BinaryTreeNode(BinaryTreeNode * btn)
     right = btn->right ;
     left = btn->left ;
 }
+
+BinaryTreeNode::BinaryTreeNode(const BinaryTreeNode *btn)
+{
+    person = btn->person;
+    right = btn->right;
+    left = btn->left;
+}
