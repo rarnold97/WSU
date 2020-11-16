@@ -8,4 +8,6 @@ include_directories(.)
 add_executable(project4
         BinarySearchTree.h
         BinaryTreeNode.h
-        Small-Database.txt main.cpp BinarySearchTree.cpp BinaryTreeNode.cpp)
+        Employee.cpp
+        Employee.h
+        main.cpp BinarySearchTree.cpp BinaryTreeNode.cpp)

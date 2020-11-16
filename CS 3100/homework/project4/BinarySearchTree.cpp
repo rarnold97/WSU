@@ -17,12 +17,17 @@ bool save(); // using inorder tree traversal
 
 */
 typedef BinaryTreeNode Node;
-typedef BinarySearchTree::Iterator Iterator;
 
+//constructor
 BinarySearchTree::BinarySearchTree()
 {
     root = NULL;
     size = 0;
+}
+//destructor
+BinarySearchTree::~BinarySearchTree()
+{
+    clear();
 }
 
 int BinarySearchTree::BSTsize(){return size;}
@@ -45,33 +50,22 @@ void BinarySearchTree::expandExternal(Employee& E, Node* btn){
     }
 }
 
-Node* BinarySearchTree::removeAboveExternal(Node* btn) {
-    Node* w = btn; Node* v = w->par;
-    Node* sib = (w == v->left ? v->right : v->left);
-    if (v == root){
-        root = sib ;
-        sib->par = NULL;
-    }
-    else
-    {
-        Node* gpar = v->par;
-        if (v == gpar->left) gpar->left = sib ;
-        else gpar->right = sib;
-        sib->par = gpar ;
-    }
 
-    delete w; delete v;
-    size -=2 ;
-    return sib;
-}
-
-Node * BinarySearchTree::getRightMost(Node* btn)
+Node * getRightMost(Node* btn)
 {
-    Node* tmp = btn ->right ;
-    while (tmp->right != NULL) tmp = tmp->right;
-    return tmp ;
+    Node* current = btn;
+    while (current && current->right != NULL) current = current->right;
+    return current ;
 }
 
+BinaryTreeNode* getLeftMost(BinaryTreeNode* btn)
+{
+    Node* current = btn;
+    while (current && current->left !=NULL) current = current->left;
+    return current ;
+}
+
+/**
 //successor
 Iterator& Iterator::operator++()
 {
@@ -111,55 +105,75 @@ Iterator BinarySearchTree::end()
     return out ;
 
 }
-
+**/
 bool BinarySearchTree::insert(Employee& E)
 {
-
     Node* v = root;
     Node* w = new Node(E) ;
+
     if (root == NULL)
     {
         root = w ;
         return true;
     }
 
-    while (v->isInternal())
+    do
     {
         if (w > v)
         {
-            v = v->right;
+            if (v->right == NULL)
+            {
+                v->right = w;
+                w->par = v ;
+                return true;
+            }
+            else{
+                v = v->right;
+            }
+
         }
         else if (w < v)
         {
-            v = v->left;
+            if (v->left == NULL)
+            {
+                v->left = w;
+                w->par = v ;
+                return true;
+            }
+            else{
+                v = v->left;
+            }
+
         }
         else
         {
             std::cout<<"No Duplicates allowed!"<<std::endl;
             return false;
         }
-    }
 
-    if (w > v)
-    {
-        v->right = w ;
-    }
-    else if (w < v)
-    {
-        v->left = w ;
-    }
-    else
-    {
-        std::cout<<"No Duplicates allowed!"<<std::endl;
-        return false;
-    }
+    }while (true);
 
-    return true; //finished successfully
 }
 
 
-Node* findSuccessor(const BinaryTreeNode *node_in)
+Node* findSuccessor(BinaryTreeNode *node_in, BinaryTreeNode *root)
 {
+
+    if (node_in == getRightMost(root)) return NULL ;
+    Node* w = node_in;
+    if (w->right != NULL)
+        return getLeftMost(w->right);
+
+    Node* p = w->par ;
+    while(p!=NULL && w == p->right)
+    {
+        w = p;
+        p = p->par;
+    }
+
+    return p;
+
+    /*
     Node* w = node_in->right ;
 
     if (w->isInternal()){
@@ -176,6 +190,7 @@ Node* findSuccessor(const BinaryTreeNode *node_in)
     }
 
     return w ;
+    */
 }
 
 Employee* BinarySearchTree::search(int k)
@@ -237,7 +252,7 @@ Node* DeleteNode(Node* tree, const int k)
             return tmp ;
         }
 
-        Node* tmp = findSuccessor(tmp);
+        Node* tmp = getLeftMost(tree->right);
         tree->setElement(tmp->getElement());
         //delete inorder successor
         tree->right = DeleteNode(tree->right, tmp->getKey()) ;
@@ -281,11 +296,11 @@ bool BinarySearchTree::print()
     if (root == NULL) return false;
 
     Node* tmp = root ;
-    do {
+    while (tmp != NULL)
+    {
         std::cout<<tmp->getElement()<<std::endl;
-        tmp = findSuccessor(tmp) ;
+        tmp = findSuccessor(tmp, root) ;
     }
-    while(tmp!= getRightMost(root));
 
     return true;
 }
@@ -298,14 +313,33 @@ bool BinarySearchTree::save()
 
     try {
         Node* tmp = root ;
-        do {
+        while (tmp != NULL)
+        {
             Employee E = tmp->getElement();
             file<<E.getLastName()<<" "<<E.getFirstName()<<" "<<E.getID()<<std::endl;
-            tmp = findSuccessor(tmp) ;
+            tmp = findSuccessor(tmp, root) ;
         }
-        while(tmp!= getRightMost(root));
     }catch(...)
     {return false;}
 
+    return true;
+}
+
+void postorder(Node* current)
+{
+if (current == NULL) return;
+postorder(current->left);
+postorder(current->right);
+std::cout<<"deleting key: "<< current->getKey()<<std::endl;
+delete(current) ;
+}
+
+bool BinarySearchTree::clear()
+{
+    if (root == NULL){
+        std::cout<<"Nothing deleted!"<<std::endl;
+        return false;
+    }
+    postorder(root);
     return true;
 }
