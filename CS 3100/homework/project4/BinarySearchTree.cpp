@@ -3,6 +3,7 @@
 //
 
 #include "BinarySearchTree.h"
+#include <iostream>
 
 /*
 BinarySearchTree();	//constructor
@@ -116,6 +117,11 @@ bool BinarySearchTree::insert(Employee& E)
 
     Node* v = root;
     Node* w = new Node(E) ;
+    if (root == NULL)
+    {
+        root = w ;
+        return true;
+    }
 
     while (v->isInternal())
     {
@@ -152,7 +158,7 @@ bool BinarySearchTree::insert(Employee& E)
 }
 
 
-Node* BinarySearchTree::findSuccessor(const BinaryTreeNode *node_in)
+Node* findSuccessor(const BinaryTreeNode *node_in)
 {
     Node* w = node_in->right ;
 
@@ -170,4 +176,136 @@ Node* BinarySearchTree::findSuccessor(const BinaryTreeNode *node_in)
     }
 
     return w ;
+}
+
+Employee* BinarySearchTree::search(int k)
+{
+    //root has no nodes
+    if (root ==NULL){
+        std::cout<<"Key Not Found"<<std::endl;
+        return NULL;
+    }
+
+    Node* tmp = root ;
+
+    do {
+        if (k==tmp->getKey())
+        {Employee* target = tmp->getElementPtr() ;
+        return target;}
+        else if (k > tmp->getKey())
+        {
+            tmp = tmp ->right;
+        }
+        else
+        {
+            tmp = tmp->left;
+        }
+    } while(tmp->isInternal());
+
+    // did not find the key
+    std::cout<< "Key Not Found"<<std::endl;
+    return NULL ;
+
+}
+
+
+Node* DeleteNode(Node* tree, const int k)
+{
+    if (tree == NULL)
+        return tree;
+
+    // if the key is smaller than the root, its in the left subtree
+    if (k < tree->getKey())
+        tree-> left = DeleteNode(tree->left, k) ;
+
+    //otherwise it is in the right subtree
+    else if (k> tree->getKey())
+        tree ->right = DeleteNode(tree->right, k);
+
+    //found where it is, has to equal
+    else{
+        if (tree->left == NULL)
+        {
+            Node* tmp = tree->right;
+            delete(tree);
+            return tmp ;
+        }
+        else if (tree->right == NULL)
+        {
+            Node* tmp = tree->left;
+            delete(tree);
+            return tmp ;
+        }
+
+        Node* tmp = findSuccessor(tmp);
+        tree->setElement(tmp->getElement());
+        //delete inorder successor
+        tree->right = DeleteNode(tree->right, tmp->getKey()) ;
+    }
+    return tree;
+}
+
+
+bool BinarySearchTree::remove(int k)
+{
+    if (root==NULL) return false ;
+
+    Node* tree = root ;
+
+    bool found = false;
+
+    do {
+        if (k==tree->getKey())
+        {
+            found = true;
+            break;
+        }
+        else if (k > tree->getKey())
+        {
+            tree = tree ->right;
+        }
+        else
+        {
+            tree = tree->left;
+        }
+    }while(tree->isInternal());
+
+    if (!found) return found;
+
+    root = DeleteNode(root, k);
+    return true ;
+}
+
+bool BinarySearchTree::print()
+{
+    if (root == NULL) return false;
+
+    Node* tmp = root ;
+    do {
+        std::cout<<tmp->getElement()<<std::endl;
+        tmp = findSuccessor(tmp) ;
+    }
+    while(tmp!= getRightMost(root));
+
+    return true;
+}
+
+bool BinarySearchTree::save()
+{
+    if (root == NULL) return false;
+    ofstream file ;
+    file.open("Binary-Tree-Output.txt");
+
+    try {
+        Node* tmp = root ;
+        do {
+            Employee E = tmp->getElement();
+            file<<E.getLastName()<<" "<<E.getFirstName()<<" "<<E.getID()<<std::endl;
+            tmp = findSuccessor(tmp) ;
+        }
+        while(tmp!= getRightMost(root));
+    }catch(...)
+    {return false;}
+
+    return true;
 }

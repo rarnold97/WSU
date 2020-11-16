@@ -38,6 +38,13 @@ public:
     //read only access
     const Employee& getElement() const
         {return person;}
+    Employee* getElementPtr()
+        {
+        Employee* E = &person;
+        return E;
+        }
+    void setElement(Employee E)
+        {person = Employee(E);}
     void setLeft(BinaryTreeNode* btn)
         {left = btn;}
     void setRight(BinaryTreeNode* btn)
@@ -50,6 +57,8 @@ public:
         { return this->left == NULL && this->right == NULL; }
     bool isInternal()
         {return !isExternal();}
+    int getKey() const
+        {return person.getID();}
 };
 
 #endif

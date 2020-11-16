@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include "BinaryTreeNode.h"
 #include "Employee.h"
+#include <fstream>
 #include <list>
 
 using namespace std;
@@ -58,12 +59,16 @@ public:
         private:
             const Node* btn ;
         public:
-            Iterator(const BinaryTreeNode* v) : btn(v) {}
+            explicit Iterator(const BinaryTreeNode* v) : btn(v) {}
             const Employee& operator*() const {return btn->getElement();}
             //Employee& operator*(){return btn->getElement();}
-            bool operator==(Iterator& otherPos)
+            bool operator==(Iterator otherPos)
                 {return btn == otherPos.btn;}
+            bool operator!=(Iterator otherPos)
+                {return !(btn == otherPos.btn);}
             Iterator& operator++(); // successor
+            void print()
+                {std::cout<<btn->getElement()<<std::endl;}
             friend class BinarySearchTree;
     }; // end of iterator class
 
@@ -85,8 +90,6 @@ public:
         BinaryTreeNode* getRoot() const;
         BinaryTreeNode* getRightMost(BinaryTreeNode*);
 
-        BinaryTreeNode* findSuccessor(const BinaryTreeNode*);
-
         void expandExternal(Employee& E, Node* btn);
         Node* removeAboveExternal(Node* btn);
         friend class Iterator;
@@ -96,7 +99,8 @@ public:
         int size;
 };
 
-
+BinaryTreeNode* findSuccessor(const BinaryTreeNode*);
+Node* DeleteNode(Node* tree, int k);
 
 #endif
  
