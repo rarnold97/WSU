@@ -17,11 +17,12 @@ BinaryTreeNode(BinaryTreeNode* btn);
  */
 
 // default constructor
-BinaryTreeNode::BinaryTreeNode(Employee &newEmployee,  BinaryTreeNode* rightptr, BinaryTreeNode* leftptr)
+BinaryTreeNode::BinaryTreeNode(Employee &newEmployee,  BinaryTreeNode* rightptr, BinaryTreeNode* leftptr, BinaryTreeNode* p)
 {
     person = newEmployee;
     right = rightptr ;
     left = leftptr ;
+    par = p ;
 }
 
 BinaryTreeNode::BinaryTreeNode(BinaryTreeNode * btn)
@@ -29,6 +30,7 @@ BinaryTreeNode::BinaryTreeNode(BinaryTreeNode * btn)
     person = btn->person ;
     right = btn->right ;
     left = btn->left ;
+    par = btn->par ;
 }
 
 BinaryTreeNode::BinaryTreeNode(const BinaryTreeNode *btn)
@@ -36,4 +38,11 @@ BinaryTreeNode::BinaryTreeNode(const BinaryTreeNode *btn)
     person = btn->person;
     right = btn->right;
     left = btn->left;
+    par = btn->par;
+}
+
+BinaryTreeNode::~BinaryTreeNode()
+{
+    //delete left;
+    //delete right;
 }

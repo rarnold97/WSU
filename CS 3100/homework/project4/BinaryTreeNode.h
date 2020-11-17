@@ -15,10 +15,11 @@ protected:
 	Employee person;
 
 public:
-    BinaryTreeNode(Employee &newEmployee ,  BinaryTreeNode * rightptr = NULL, BinaryTreeNode *leftptr = NULL);
+    explicit BinaryTreeNode(Employee &newEmployee ,  BinaryTreeNode * rightptr = NULL, BinaryTreeNode *leftptr = NULL,
+                            BinaryTreeNode *parent = NULL);
 	// copy constructor
-	BinaryTreeNode(BinaryTreeNode* btn);
-    BinaryTreeNode(const BinaryTreeNode* btn);
+	explicit BinaryTreeNode(BinaryTreeNode* btn);
+    explicit BinaryTreeNode(const BinaryTreeNode* btn);
     ~BinaryTreeNode();
 
     BinaryTreeNode * left;
@@ -51,11 +52,11 @@ public:
         {right = btn;}
     void setParent(BinaryTreeNode* btn)
         {par = btn;}
-    bool isRoot()
-        { return this->par == NULL; }
-    bool isExternal()
-        { return this->left == NULL && this->right == NULL; }
-    bool isInternal()
+    bool isRoot() const
+        { return par == NULL; }
+    bool isExternal() const
+        { return (left == NULL && right == NULL); }
+    bool isInternal() const
         {return !isExternal();}
     int getKey() const
         {return person.getID();}
