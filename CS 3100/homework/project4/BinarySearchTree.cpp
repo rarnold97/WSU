@@ -291,8 +291,23 @@ bool BinarySearchTree::remove(int k)
     return true ;
 }
 
+
+void recursivePrint(Node* node)
+{
+    if (node == NULL) return; 
+    // recursive call to the left node 
+    recursivePrint(node->left); 
+    // print data within the node 
+    std::cout << node->getElement().getFirstName() << " "
+        << node->getElement().getLastName() << " "
+        << node->getKey() << std::endl;
+    // recursive call to the right node
+    recursivePrint(node->right);
+}
+
 bool BinarySearchTree::print()
 {
+    /*
     if (root == NULL) return false;
 
     Node* tmp = root ;
@@ -303,6 +318,27 @@ bool BinarySearchTree::print()
     }
 
     return true;
+    */
+
+    // root contains nothing
+    if (root == NULL) return false; 
+    
+    recursivePrint(root);
+    // recursive print worked 
+
+    return true; 
+}
+
+void recursiveSave(std::ostream& out, Node* node)
+{
+    if (node == NULL) return;
+
+    recursiveSave(out, node->left);
+
+    Employee E = node->getElement();
+    out << E.getLastName() << " " << E.getFirstName() << " " << E.getID() << std::endl;
+
+    recursiveSave(out, node->right);
 }
 
 bool BinarySearchTree::save()
@@ -313,12 +349,8 @@ bool BinarySearchTree::save()
 
     try {
         Node* tmp = root ;
-        while (tmp != NULL)
-        {
-            Employee E = tmp->getElement();
-            file<<E.getLastName()<<" "<<E.getFirstName()<<" "<<E.getID()<<std::endl;
-            tmp = findSuccessor(tmp, root) ;
-        }
+        recursiveSave(file, tmp);
+
     }catch(...)
     {return false;}
 

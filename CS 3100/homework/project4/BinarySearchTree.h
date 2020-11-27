@@ -44,6 +44,8 @@ BinaryTreeNode* getLeftMost(BinaryTreeNode*);
 Node* DeleteNode(Node* tree, int k);
 
 void postorderDelete(Node* current);
+void recursivePrint(Node* node);
+void recursiveSave(std::ostream& out, Node* node);
 
 
 #endif
