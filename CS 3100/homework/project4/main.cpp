@@ -82,5 +82,23 @@ int main()
     bsTree.print() ;
     cout<<endl;
 
+    int key ;
+    cout<< "Enter a user ID to delete: ";
+    cin>> key ;
+    cout<<endl;
+
+    bsTree.remove(key);
+
+    bsTree.print();
+
+    cout<< "Enter a user ID to search for: ";
+    cin>>key;
+    Employee* searchedEmployee = bsTree.search(key);
+
+    cout<<endl;
+
+    //testing the save feature
+    std::cout << "Attempting to save output file ..." << std::endl;
+    bsTree.save() ;
 
 }

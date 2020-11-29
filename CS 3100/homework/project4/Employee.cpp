@@ -79,8 +79,10 @@ std::istream& operator>>(std::istream &ins, Employee &person)
 {
     std::cout<<"Enter Employee ID: " ;
     ins >> person.ID ;
+    std::cout<<std::endl;
     std::cout<<"Enter Employee's Last Name: " ;
     ins>>person.lastname ;
+    std::cout<<std::endl;
     std::cout<<"Enter Employee's First Name: ";
     ins>>person.firstname ;
 

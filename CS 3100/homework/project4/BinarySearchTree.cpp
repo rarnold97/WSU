@@ -114,17 +114,19 @@ bool BinarySearchTree::insert(Employee& E)
     if (root == NULL)
     {
         root = w ;
+        size++;
         return true;
     }
 
     do
     {
-        if (w > v)
+        if (w->getKey() > v->getKey())
         {
             if (v->right == NULL)
             {
                 v->right = w;
                 w->par = v ;
+                size++;
                 return true;
             }
             else{
@@ -132,12 +134,13 @@ bool BinarySearchTree::insert(Employee& E)
             }
 
         }
-        else if (w < v)
+        else if (w->getKey() < v->getKey())
         {
             if (v->left == NULL)
             {
                 v->left = w;
                 w->par = v ;
+                size++;
                 return true;
             }
             else{
@@ -173,24 +176,6 @@ Node* findSuccessor(BinaryTreeNode *node_in, BinaryTreeNode *root)
 
     return p;
 
-    /*
-    Node* w = node_in->right ;
-
-    if (w->isInternal()){
-        do {w = w->left;}
-        while(w->isInternal());
-    }
-    else{
-        w = node_in->par;
-        Node* tmp = new Node(node_in);
-        while(tmp == w->right)
-        {tmp=w; w = w->par;}
-        //will be null if rightmost node
-        delete tmp;
-    }
-
-    return w ;
-    */
 }
 
 Employee* BinarySearchTree::search(int k)
@@ -200,13 +185,22 @@ Employee* BinarySearchTree::search(int k)
         std::cout<<"Key Not Found"<<std::endl;
         return NULL;
     }
+    int amtSearched = 0 ;
 
     Node* tmp = root ;
 
-    do {
+    std::cout << "Searching..."<<std::endl;
+
+    while (tmp != NULL)
+    {
+        amtSearched++ ;
         if (k==tmp->getKey())
-        {Employee* target = tmp->getElementPtr() ;
-        return target;}
+        {
+            Employee* target = tmp->getElementPtr() ;
+            std::cout<<amtSearched<<" Employees Searched. Found Record."<<std::endl;
+            std::cout<<target->getID()<<" "<<target->getLastName()<<" "<<target->getFirstName()<<std::endl;
+            return target;
+        }
         else if (k > tmp->getKey())
         {
             tmp = tmp ->right;
@@ -215,10 +209,10 @@ Employee* BinarySearchTree::search(int k)
         {
             tmp = tmp->left;
         }
-    } while(tmp->isInternal());
+    }
 
     // did not find the key
-    std::cout<< "Key Not Found"<<std::endl;
+    std::cout<< "Key (ID) Not Found after searching "<<amtSearched<<" keys."<<std::endl;
     return NULL ;
 
 }
@@ -269,7 +263,8 @@ bool BinarySearchTree::remove(int k)
 
     bool found = false;
 
-    do {
+    while (tree !=NULL)
+    {
         if (k==tree->getKey())
         {
             found = true;
@@ -283,7 +278,7 @@ bool BinarySearchTree::remove(int k)
         {
             tree = tree->left;
         }
-    }while(tree->isInternal());
+    }
 
     if (!found) return found;
 
@@ -291,6 +286,64 @@ bool BinarySearchTree::remove(int k)
     return true ;
 }
 
+void recursivePrint(Node* node)
+{
+    if (node == NULL) return ;
+    //recursvie call to the left node
+    recursivePrint(node->left) ;
+    //print data within the node
+    std::cout<< node->getElement().getFirstName() << " "
+        << node->getElement().getLastName() << " "
+        << node->getKey() << std::endl;
+    //recursive call to the right node
+    recursivePrint(node->right) ;
+}
+
+bool BinarySearchTree::print()
+{
+    // root contains nothing
+    if (root==NULL) return false ;
+
+    recursivePrint(root);
+    //recursive print successful
+    return true ;
+}
+
+void recursiveSave(std::ostream& out, Node* node)
+{
+    if (node == NULL) return ;
+
+    recursiveSave(out, node->left) ;
+
+    Employee E = node->getElement();
+    out << E.getLastName() << " " << E.getFirstName() << " " << E.getID() << std::endl;
+
+    recursiveSave(out, node->right) ;
+}
+
+bool BinarySearchTree::save()
+{
+    if (root == NULL) return false;
+    ofstream file ;
+    file.open("Binary-Tree-Output.txt");
+
+    try{ // catch errors and return false indicating unsuccessful write
+        file << "____Binary Tree Save Data____:"<<std::endl;
+        Node* tmp = root ;
+        recursiveSave(file, tmp) ;
+        file.close() ;
+        std::cout << "Success saving output file Binary-Tree-Output.txt!"<<std::endl ;
+        std::cout << std::endl;
+    }catch(...)
+    {
+        std::cout << "unsuccessful in saving to disk!" << std::endl;
+        std::cout<<std::endl;
+        file.close() ;
+        return false;}
+
+    return true ;
+}
+/*
 bool BinarySearchTree::print()
 {
     if (root == NULL) return false;
@@ -324,7 +377,7 @@ bool BinarySearchTree::save()
 
     return true;
 }
-
+*/
 void postorder(Node* current)
 {
 if (current == NULL) return;
