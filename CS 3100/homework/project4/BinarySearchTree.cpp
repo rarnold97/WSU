@@ -343,41 +343,7 @@ bool BinarySearchTree::save()
 
     return true ;
 }
-/*
-bool BinarySearchTree::print()
-{
-    if (root == NULL) return false;
 
-    Node* tmp = root ;
-    while (tmp != NULL)
-    {
-        std::cout<<tmp->getElement()<<std::endl;
-        tmp = findSuccessor(tmp, root) ;
-    }
-
-    return true;
-}
-
-bool BinarySearchTree::save()
-{
-    if (root == NULL) return false;
-    ofstream file ;
-    file.open("Binary-Tree-Output.txt");
-
-    try {
-        Node* tmp = root ;
-        while (tmp != NULL)
-        {
-            Employee E = tmp->getElement();
-            file<<E.getLastName()<<" "<<E.getFirstName()<<" "<<E.getID()<<std::endl;
-            tmp = findSuccessor(tmp, root) ;
-        }
-    }catch(...)
-    {return false;}
-
-    return true;
-}
-*/
 void postorder(Node* current)
 {
 if (current == NULL) return;
