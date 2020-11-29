@@ -65,47 +65,6 @@ BinaryTreeNode* getLeftMost(BinaryTreeNode* btn)
     return current ;
 }
 
-/**
-//successor
-Iterator& Iterator::operator++()
-{
-    Node* w = btn->right ;
-    if (w->isInternal()){
-        do {btn = w; w = w->left;}
-        while (w->isInternal());
-    }
-    else
-    {
-        w = btn->par;
-        while (btn == w->right)
-        {btn = w; w = w->par;}
-        btn=w;
-    }
-    if (btn->par == NULL) btn = NULL;
-    return *this ;
-}
-
-Iterator BinarySearchTree::begin()
-{
-
-    if (root == NULL){
-        Iterator out(NULL);
-        return out ;
-    }
-    Node* v = root;
-    while(v->isInternal()) v = v->left;
-    Iterator out(v) ;
-    return out ;
-}
-
-Iterator BinarySearchTree::end()
-{
-    Node* v = BinarySearchTree::getRightMost(root);
-    Iterator out(v) ;
-    return out ;
-
-}
-**/
 bool BinarySearchTree::insert(Employee& E)
 {
     Node* v = root;
@@ -155,26 +114,6 @@ bool BinarySearchTree::insert(Employee& E)
         }
 
     }while (true);
-
-}
-
-
-Node* findSuccessor(BinaryTreeNode *node_in, BinaryTreeNode *root)
-{
-
-    if (node_in == getRightMost(root)) return NULL ;
-    Node* w = node_in;
-    if (w->right != NULL)
-        return getLeftMost(w->right);
-
-    Node* p = w->par ;
-    while(p!=NULL && w == p->right)
-    {
-        w = p;
-        p = p->par;
-    }
-
-    return p;
 
 }
 
@@ -292,8 +231,8 @@ void recursivePrint(Node* node)
     //recursvie call to the left node
     recursivePrint(node->left) ;
     //print data within the node
-    std::cout<< node->getElement().getFirstName() << " "
-        << node->getElement().getLastName() << " "
+    std::cout<< node->getElement().getLastName() << " "
+        << node->getElement().getFirstName() << " "
         << node->getKey() << std::endl;
     //recursive call to the right node
     recursivePrint(node->right) ;

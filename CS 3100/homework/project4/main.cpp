@@ -48,8 +48,8 @@ int main()
     while (ctr < nRecords)
     {
         string first, last, idNum;
-        fileIn>>first;
         fileIn>>last;
+        fileIn>>first;
         fileIn>>idNum;
         fileIn>>nLine;
         //create string stream object to convert to integer
