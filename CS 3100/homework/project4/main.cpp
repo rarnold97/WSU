@@ -1,6 +1,10 @@
-//
-// Created by ryanm on 11/12/2020.
-//
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+December. 1, 2020
+Project 4: Binary Search Tree
+*/
 
 #include "BinarySearchTree.h"
 #include <sstream>
@@ -71,6 +75,7 @@ int main()
     //begin testing methods
 
     //show results of tree build
+    cout << "Binary Search Tree contains " << bsTree.BSTsize() << " Nodes !" <<  endl ;
     bsTree.print() ;
     cout<<endl;
 

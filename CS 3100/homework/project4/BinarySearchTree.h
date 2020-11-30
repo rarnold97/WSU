@@ -1,4 +1,10 @@
-//Employee.h provided by Dr. Meilin Liu, and you can make minor modifications if //you want.
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+December. 1, 2020
+Project 4: Binary Search Tree
+*/
 
 #ifndef _BinarySearchTree_
 #define _BinarySearchTree_
@@ -28,22 +34,17 @@ public:
 
     BinaryTreeNode* getRoot() const;
 
-
-
-    void expandExternal(Employee& E, Node* btn);
-    friend class Iterator;
-
 private:
     BinaryTreeNode * root;
     int size;
 };
 
-BinaryTreeNode* findSuccessor(BinaryTreeNode*, BinaryTreeNode *root);
+//BinaryTreeNode* findSuccessor(BinaryTreeNode*, BinaryTreeNode *root);
 BinaryTreeNode* getRightMost(BinaryTreeNode*);
 BinaryTreeNode* getLeftMost(BinaryTreeNode*);
 Node* DeleteNode(Node* tree, int k);
 
-void postorderDelete(Node* current);
+//void postorderDelete(Node* current);
 void recursivePrint(Node* node);
 void recursiveSave(std::ostream& out, Node* node);
 

@@ -1,4 +1,10 @@
-//Employee.h provided by Dr. Meilin Liu in Fall 2020, and you can modify it if you want.
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+December. 1, 2020
+Project 4: Binary Search Tree
+*/
 
 #ifndef _Employee_
 #define _Employee_

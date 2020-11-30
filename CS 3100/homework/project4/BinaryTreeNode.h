@@ -1,4 +1,10 @@
-////Employee.h provided by Dr. Meilin Liu, and you can modify it if you want.
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+December. 1, 2020
+Project 4: Binary Search Tree
+*/
 
 
 #ifndef _BinaryTreeNode_
@@ -22,11 +28,11 @@ public:
     explicit BinaryTreeNode(const BinaryTreeNode* btn);
     ~BinaryTreeNode();
 
-    BinaryTreeNode * left;
-    BinaryTreeNode * right;
-    BinaryTreeNode * par;
+    BinaryTreeNode * left; // left child
+    BinaryTreeNode * right; // right child
+    BinaryTreeNode * par; // parent node
 
-    //operator overloads for comparisons
+    //operator overloads for comparisons of ID
     Employee& operator*()
         { return person; }
     bool operator==(BinaryTreeNode* btn) const
@@ -39,25 +45,28 @@ public:
     //read only access
     const Employee& getElement() const
         {return person;}
+    // pointer to employee element
     Employee* getElementPtr()
         {
         Employee* E = &person;
         return E;
         }
+    // set a new employee element
     void setElement(Employee E)
         {person = Employee(E);}
+    // set left child
     void setLeft(BinaryTreeNode* btn)
         {left = btn;}
+    // set right child
     void setRight(BinaryTreeNode* btn)
         {right = btn;}
+    // set parent node
     void setParent(BinaryTreeNode* btn)
         {par = btn;}
+    // we know that it is the root if there is no parent node
     bool isRoot() const
         { return par == NULL; }
-    bool isExternal() const
-        { return (left == NULL && right == NULL); }
-    bool isInternal() const
-        {return !isExternal();}
+    // return the ID key, which is an integer
     int getKey() const
         {return person.getID();}
 };

@@ -1,6 +1,10 @@
-//
-// Created by ryanm on 11/12/2020.
-//
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+December. 1, 2020
+Project 4: Binary Search Tree
+*/
 
 #include "BinaryTreeNode.h"
 /*
