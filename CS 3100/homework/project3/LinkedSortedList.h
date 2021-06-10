@@ -1,3 +1,11 @@
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+November. 9, 2020
+Project 3: Linked Sorted List
+*/
+
 //LinkedSortedList.h
 
 //Definition of a sorted linked list, Provided by Meilin Liu, Fall 2020
@@ -22,7 +30,10 @@ private:
 
 public:
 	// Constructor
-	LinkedSortedList(); 
+	LinkedSortedList();
+
+	//Copy Constructor
+	LinkedSortedList(Node* &head0, int n);
 
 	// Destructor
 	~LinkedSortedList(); 
@@ -53,6 +64,9 @@ public:
     // if the list is empty.  Note:  the "const" keyword indicates that
     // this function cannot change the contents of the sorted linked list.
 	void print() const;
+
+    //return the head of the sorted linked list
+    Node* getHead() const;
 
 };
 

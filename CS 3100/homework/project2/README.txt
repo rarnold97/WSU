@@ -8,6 +8,7 @@ Project 2: Array Based Stack
 
 Prep:
 -Make sure to pass in 'all.last.txt' as the file arguement for the file reader.  defaulted to 'all.last.txt'
+-NOTE: If using windows, uncomment the line : system("pause") to keep programming from terminating too fast.
 
 Explanation of interface:
 

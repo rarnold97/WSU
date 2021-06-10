@@ -1,3 +1,11 @@
+/*
+CS 3100 Data Structures and Algorithms
+Ryan Arnold
+Dr.Meilin Liu
+November. 9, 2020
+Project 3: Linked Sorted List
+*/
+
 // LinkedNode.h
 
 // This is the definition for a linked list node that  stores an employee object.  
