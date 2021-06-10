@@ -14,8 +14,8 @@
 #include <string>
 #include <time.h>
 #include <vector>
+#include <fstream>
 
-#include "CircularQueue.h"
 
 #define BUFFER_SIZE 10 
 #define NUM_DATA_ITEMS 100 
@@ -28,11 +28,14 @@
 std::mutex mutex_lock; 
 
 sem_t sem_empty, sem_full ; 
-
-//CircQueue<std::string> buffer(BUFFER_SIZE) ; 
+ 
 
 int in = 0 ; 
 int out = 0 ; 
 std::string buffer[BUFFER_SIZE] ; 
+
+// fid streams for logging producer-consumer output
+std::ofstream prod_log ; 
+std::ofstream cons_log ; 
 
 #endif
