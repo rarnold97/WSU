@@ -1,36 +1,16 @@
 #include "server_client_headers.h"
+#include "rng.h"
 
-
-std::string GetRandomFileID()
-{
-
-    std::string fileArr[10] = {
-        "10101010A,xml",
-        "10101010B.xml",
-        "20202020A.xml",
-        "20202020B.xml",
-        "30303030A.xml",
-        "30303030B.xml",
-        "40404040A.xml",
-        "40404040B.xml",
-        "50505050A.xml",
-        "50505050B.xml"
-    } ; 
-
-    int index = rand() % 10 ; 
-
-    return (fileArr[index]) ;
-    
-}
 
 int main()
 {
     int client, server ; 
     int addrSize ; 
     bool exitFlag = false;
-    char buffer[BUFFER_SIZE] ; 
+    char buffer[BUFFER_SIZE] ;  
+    int producedItem ; 
 
-    std::string fileEntry ; 
+    //std::string fileEntry ; 
 
     struct sockaddr_in server_address ; 
 
@@ -68,16 +48,18 @@ int main()
         for (int i = 0 ; i < NUM_ITEMS; i++)
         {
             usleep(1) ; 
-            fileEntry = GetRandomFileID() ; 
-            std::cout<< "Producing Item "<< std::setw(3) << i+1 << ": " << fileEntry << std::endl;
-            strcpy(buffer, fileEntry.c_str()) ; 
+            //fileEntry = GetRandomFileID() ; 
+            producedItem = GenerateRandInt() ; 
+            sprintf(buffer, "%d", producedItem) ; 
+            std::cout<< "Producing Item "<< std::setw(3) << i+1 << ": " << buffer << std::endl;
+            //strcpy(buffer, fileEntry.c_str()) ; 
             send(client, buffer, sizeof(buffer), 0 ) ; 
         }
 
         // for neatness
         std::cout<<std::endl;
 
-        *buffer = '#' ; 
+        *buffer = '#' ;  
         send(client, buffer, sizeof(buffer), 0) ; 
 
         recv(client, buffer, sizeof(buffer), 0) ; 

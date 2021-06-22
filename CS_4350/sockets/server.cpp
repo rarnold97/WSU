@@ -1,7 +1,7 @@
 #include "server_client_headers.h"
 
 
-int main()
+int main() 
 {
     // declare constants 
     int client, server ; 

@@ -1,27 +1,5 @@
 #include "SharedResources.h"
-#include "CircularQueue.h"
-
-std::string GetRandomFileID()
-{
-
-    std::string fileArr[10] = {
-        "10101010A,xml",
-        "10101010B.xml",
-        "20202020A.xml",
-        "20202020B.xml",
-        "30303030A.xml",
-        "30303030B.xml",
-        "40404040A.xml",
-        "40404040B.xml",
-        "50505050A.xml",
-        "50505050B.xml"
-    } ; 
-
-    int index = rand() % 10 ; 
-
-    return (fileArr[index]) ;
-    
-}
+#include "rng.h"
 
 void producer()
 {
@@ -29,12 +7,12 @@ void producer()
     srand(time(NULL)) ; 
 
     // item declaration 
-    std::string producedFileID; 
+    int producedItem; 
 
     for (int i = 0; i < NUM_DATA_ITEMS; i++)
     { 
         // produce item
-        producedFileID = GetRandomFileID() ;
+        producedItem = GenerateRandInt() ;
 
         // synchronize using semaphores
         sem_wait(&sem_empty) ; 
@@ -43,11 +21,11 @@ void producer()
 
             /*critical section code, add next produced item to buffer */
             
-            buffer[in] = producedFileID ; 
+            buffer[in] = producedItem ; 
             in = (in + 1) % BUFFER_SIZE ; 
 
-            std::cout <<"Producer Thread: Inserted Item -> "<< producedFileID << " at Item Number -> " << i + 1 << std::endl ; 
-            prod_log <<"Producer Thread: Inserted Item -> "<< producedFileID << " at Item Number -> " << i + 1 << std::endl ; 
+            std::cout <<"Producer Thread: Inserted Item -> "<< producedItem << " at Item Number -> " << i + 1 << std::endl ; 
+            prod_log <<"Producer Thread: Inserted Item -> "<< producedItem << " at Item Number -> " << i + 1 << std::endl ; 
 
         mutex_lock.unlock(); 
         sem_post(&sem_full) ;
@@ -65,11 +43,11 @@ void consumer()
         mutex_lock.lock() ; 
 
             /* do critical section stuff here, i.e., consume the next item */
-            std::string consumedFileName = buffer[out] ; 
+            int consumedItem = buffer[out] ; 
             out = (out+1) % BUFFER_SIZE ; 
             
-            std::cout<< "Consumer Thread: Removed Item -> "<< consumedFileName << " at item Number -> " << j + 1 << std::endl ; 
-            cons_log<< "Consumer Thread: Removed Item -> "<< consumedFileName << " at item Number -> " << j + 1 << std::endl ; 
+            std::cout<< "Consumer Thread: Removed Item -> "<< consumedItem << " at item Number -> " << j + 1 << std::endl ; 
+            cons_log<< "Consumer Thread: Removed Item -> "<< consumedItem << " at item Number -> " << j + 1 << std::endl ; 
 
         mutex_lock.unlock() ;
         sem_post(&sem_empty) ;

@@ -17,6 +17,9 @@ int main(void)
         fprintf(stderr, "msgget failed with error %d\n", errno) ; 
         exit(EXIT_FAILURE) ; 
     }// message type to receive from sender
+    
+    std::cout << "Reading what Producer Sent ..." << std::endl;
+    std::cout << std::endl;
 
     // loop until all items have been taken off the queue
     while(true)
@@ -40,7 +43,12 @@ int main(void)
         std::cout << "Producer Wrote: " << body.mtext << std::endl ; 
 
     }
-// message type to receive from sender
+
+    std::cout << std::endl;
+    std::cout << "Finished Reading messages, closing mailbox ..." << std::endl;
+    
+    //close the system mailbox
+    if (msgctl(msgid, IPC_RMID, 0) == -1)
     {
         // removal operation failed, warn user
         fprintf(stderr, "msgctl(IPC_RMID) failed\n") ; 

@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <sys/wait.h>
 #include <iomanip>
+#include "rng.h"
 
 #define BUFFER_SIZE 100
 #define NUM_ITEMS 100 
@@ -15,38 +16,19 @@
 #define READ_END 0
 #define WRITE_END 1
 
-std::string GetRandomFileID()
-{
-
-    std::string fileArr[10] = {
-        "AAAA,xml",
-        "BBBB.xml",
-        "CCCC.xml",
-        "DDDD.xml",
-        "EEEE.xml",
-        "FFFF.xml",
-        "GGGG.xml",
-        "HHHH.xml",
-        "IIII.xml",
-        "JJJJ.xml"
-    } ;
-
-    int index = rand() % 10 ;
-
-    return (fileArr[index]) ;
-}
 
 void producer(FILE *pipe_write_end)
 {
     std::string producedFileItem ; 
+    int producedItem ; 
     srand(time(NULL)) ; 
 
     for (int i = 0; i < NUM_ITEMS; i++)
     {   
         usleep(1); 
-        producedFileItem = GetRandomFileID() ; 
-        std::cout << "Producing item " << std::setw(3) << i+1 << " : " << producedFileItem << std::endl; 
-        fprintf(pipe_write_end, "%s\n", producedFileItem.c_str());
+        producedItem = GenerateRandInt() ; 
+        std::cout << "Producing item " << std::setw(3) << i+1 << " : " << producedItem << std::endl; 
+        fprintf(pipe_write_end, "%d\n", producedItem);
     }
 
     fclose(pipe_write_end) ; 
@@ -59,17 +41,17 @@ void producer(FILE *pipe_write_end)
 
 void consumer(FILE *pipe_read_end)
 {
-    char text[BUFFER_SIZE] ; 
+    int consumedItem ; 
     int success ; 
     unsigned int count = 1; 
 
     while(!feof(pipe_read_end))
     {
-        success = fscanf(pipe_read_end, "%s\n", text) ; 
-        std::string consumed_item = text ; 
+        success = fscanf(pipe_read_end, "%d\n", &consumedItem) ; 
+        //std::string consumed_item = text ; 
 
         if (success)
-            std::cout << "Consumed File ID item " << std::setw(3) << count << " : " << consumed_item << std::endl;
+            std::cout << "Consumed File ID item " << std::setw(3) << count << " : " << consumedItem << std::endl;
         else
             break ; 
 

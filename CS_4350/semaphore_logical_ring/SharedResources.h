@@ -32,7 +32,8 @@ sem_t sem_empty, sem_full ;
 
 int in = 0 ; 
 int out = 0 ; 
-std::string buffer[BUFFER_SIZE] ; 
+//std::string buffer[BUFFER_SIZE] ; 
+int buffer[BUFFER_SIZE] ;
 
 // fid streams for logging producer-consumer output
 std::ofstream prod_log ; 
