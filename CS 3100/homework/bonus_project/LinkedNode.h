@@ -2,8 +2,8 @@
 CS 3100 Data Structures and Algorithms
 Ryan Arnold
 Dr.Meilin Liu
-November. 9, 2020
-Project 3: Linked Sorted List
+December. 4, 2020
+Bonus Project: Hash Table
 */
 
 // LinkedNode.h

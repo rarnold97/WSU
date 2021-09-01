@@ -14,7 +14,7 @@ Project 4: Binary Search Tree
 * to read the input file, Small-Database.txt , make sure that this is either:
     1. in the same directory as the binary
     2. the file is in the project directory and the VS 2019 Working directory is set to where the source and input files are
-
+* the output text file will be stored in the working directory.
 
 # Binary Tree Node
 
