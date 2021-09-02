@@ -1,0 +1,64 @@
+\documentclass[../report1_rarnold.tex]{subfiles}
+
+\begin{document}
+
+\noindent CEG 7580: Project 1 \hfill Ryan Arnold \hfill September. 07, 2021
+
+\section*{Part 1 Results}
+
+\begin{enumerate}[a.]
+  \item (See code in attached)
+  
+  \item The following is the program output using the maximum of 8 levels, as entered by the user.
+  \begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.25]{"drip_image"}
+	\caption{Matlab results of varying intensity level powers.} 
+	\label{1a}
+	\end{figure}
+
+\end{enumerate}
+
+\section*{Part 2 Results}
+
+\begin{enumerate}[a.]
+	\item See Figure \ref{2a} for the result of shrinking the chronometer image by a factor of 4.
+	 
+	\item  
+\noindent After rescaling the image back to its original size using pixel replication, Most of the details were preserved, as demonstrated in Figure \ref{2b}.  However, it was evident that there was "pixelation" in the restored image.  Moreover, the image appeared fuzzy, especially on the edges.  The reasoning for this is because the pixels were copied throughout uniformly sized regions in rescaling the image.  The original data was only estimated, and this was done using a simple replication approach. The method was bound to not be fully accurate, especially since there is not much continuity between some pixels using this method.  This is why features of the restored image have a fuzzy/blurry appearance.
+
+
+	\item 	  
+The restoration of the image using bilinear interpolation gives much better results than the pixel replication techniques, as illustrated in Figure \ref{2c}.  This is because the information is better preserved using a function of the preexisting neighboring pixels.  Furthermore, it is more continuous this way, and not as discrete as using replication.  This gives a better estimate of the gray levels, and a smoother appearance.  However, it still is not a perfect replication of the original image.  Nonetheless, this was expected since it is an estimate of the original image data.
+
+\end{enumerate}
+
+  	\begin{figure}[!htbp]
+		\centering
+		\includegraphics[scale=0.40]{"chrono_fourth"}
+		\caption{Chronometer reduced by a factor of 4.} 
+		\label{2a}
+	\end{figure}	
+	
+	\begin{figure}[!htbp]
+		\centering
+		\includegraphics[scale=0.40]{"pixel_rep"}
+		\caption{Chronometer restored using pixel replication.} 
+		\label{2b}
+	\end{figure}	
+	
+	  \begin{figure}[!htbp]
+		\centering
+		\includegraphics[scale=0.40]{"bilinear_interp"}
+		\caption{Chronometer restored using bilinear interpolation.} 
+		\label{2c}
+	  \end{figure}	
+	  
+	  \begin{figure}[!htbp]
+		\centering
+		\includegraphics[scale=0.40]{"og_image"}
+		\caption{Original Chronometer image for reference.} 
+		\label{og_image}
+	  \end{figure}	
+
+\end{document}
