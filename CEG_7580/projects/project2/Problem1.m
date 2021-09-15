@@ -14,14 +14,15 @@ Ib_double = im2double(Ib) ;
 %log xform
 
 % write a loop to test the ideal image
-c1_log = 845 ; 
-c2_log = 650 ; 
+%c1_log = 845 ; 
+c1_log = 2.0 ; 
+c2_log = 1.0 ; 
 
-c1_power = 500 ; 
-c2_power = 250 ; 
+c1_power = 1.0 ; 
+c2_power = 1.0 ; 
 
 gamma1 = 0.5 ; 
-gamma2 = 0.5 ;
+gamma2 = 4.0 ;
 
 Ia_log_xform = log_xform(Ia, c1_log) ;
 Ib_log_xform = log_xform(Ib, c2_log) ; 
@@ -110,7 +111,7 @@ function I_xform = log_xform(I, c)
     
     I_xform = c * log10(1 + I) ;
     I_xform = shift_image_values(I_xform) ; 
-    I_xform = uint8(I_xform) ; 
+    %I_xform = uint8(I_xform) ; 
 end
 
 function I_xform = power_xform(I, c, gamma)
@@ -122,6 +123,5 @@ function I_xform = power_xform(I, c, gamma)
     
     I_xform = c*I.^gamma ;
     I_xform = shift_image_values(I_xform) ; 
-    I_xform = uint8(I_xform);
     
 end
