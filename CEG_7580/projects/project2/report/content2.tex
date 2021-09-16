@@ -32,6 +32,12 @@ Date submitted: 09/17/21
 \begin{enumerate}[a.]
   \item See the Figures below for the results of applying the log transformation to the input images. 
   
+  \item See the Following Figures for the results of applying the power transformations to the input images.
+
+\end{enumerate}
+
+\clearpage
+  
   	\begin{figure}[!htbp]
 	\centering
 	\includegraphics[scale=0.25]{"log_spine"}
@@ -46,7 +52,7 @@ Date submitted: 09/17/21
 	\label{log_city}
 	\end{figure}
   
-  \item See the Following Figures for the results of applying the power transformations to the input images.
+
   
   	\begin{figure}[!htbp]
 	\centering
@@ -62,14 +68,15 @@ Date submitted: 09/17/21
 	\label{power_city}
 	\end{figure}
 
-\end{enumerate}
+
 
 \section*{Part 2 Results}
 
 \begin{enumerate}[a.]
 	\item 
-	Here is some text.
-	
+	\noindent Global histogram equalization was applied to all four of the provided figures using the matlab command: imhist().  The objective was to create uniform gray level distributions among all the images, no matter what the input contrast or intensity biases were.  As demonstrated in Figures \ref{histo1} - \ref{Tr4}, this was achieved.  Note, plotting the 'newmap' variable (output of histeq() command) showed a relationship between the input gray levels and the output, equalized levels. The output levels can be denoted by \textit{s} in this context.  The relationships shown in the s vs. r plots are the transfer functions, which map the input levels to the output histogram equalized levels. In Figure \ref{histo1}, there is a bias towards darker levels in the original image distribution.  In the transfer function, plotted in Figure \ref{Tr1}, there is a clear functional mapping in the darker level regime, and then a one-to-one relationship in brighter levels to effectively equalize the entire image.  In Figure \ref{histo2}, there is a clear bias towards brighter levels in the histogram from the original image.  The transfer function in Figure \ref{Tr2}, has more emphasis on mapping the brighter levels instead of the darker levels.  The histogram in Figure \ref{histo3} shows emphasis in the middle, which is indicative of high contrast.  Also note that the transfer function in Figure \ref{Tr3} is most active in the middle levels for mapping to a more equalized image.  Finally, the histogram displayed in Figure \ref{histo4} is already close to being uniform.  Moreover, the transfer function in Figure \ref{Tr4} shows a near linear relationship, as expected based on the input image histogram.
+\clearpage
+
 	\begin{figure}[!htbp]
 	\centering
 	\includegraphics[scale=0.25]{"histo1"}
@@ -129,7 +136,15 @@ Date submitted: 09/17/21
 	\clearpage
 	
 	\item  
-\noindent After rescaling the image back to its original size using pixel replication, Most of the details were preserved, as demonstrated in Figure \ref{2b}.  However, it was evident that there was "pixelation" in the restored image.  Moreover, the image appeared fuzzy, especially on the edges.  The reasoning for this is because the pixels were copied throughout uniformly sized regions in rescaling the image.  The original data was only estimated, and this was done using a simple replication approach. The method was bound to not be fully accurate, especially since there is not much continuity between some pixels using this method.  This is why features of the restored image have a fuzzy/blurry appearance.
+\noindent Local histogram equlization was applied to Figure \ref{local} using a mask size of [3,3]; this was implemented using the blockproc() function.  The kernel function entailed using histogram equalization, implemented using histeq().  In the original image on the left of Figure \ref{local}, there are dark squares with faint remnants of characters and symbols.  After applying global histogram equalization to the image, as shown in the middle image of Figure \ref{local}, the characters and symbols can be seen more clearly. However, the background of the squares remain dark.  After applying local histogram equalization with a [3,3] mask size, the symbols and characters can be seen with more distinct edges.  These finer details are brought out because local histogram equalization is applied over smaller areas, allowing these subtleties to present themselves.  In global histogram equalization, the levels are influenced by the gray level behavior of the image as a whole.  This can prevent finer details from being enhanced, especially if there is noise present, or the average value of the image's gray levels is distinctly different from the levels that describe details like edges.  With a smaller region of equalization, the levels are not as heavily influenced by biases or trends in the gray levels of the overall image that would otherwise dampen local details.  
+\clearpage
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.28]{"local_histeq"}
+	\caption{Matlab results of global and local histogram equalization of Figure 3.32 a.} 
+	\label{local}
+	\end{figure}
 
 \end{enumerate}
 
