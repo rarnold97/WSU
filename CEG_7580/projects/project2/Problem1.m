@@ -15,13 +15,13 @@ Ib_double = im2double(Ib) ;
 
 % write a loop to test the ideal image
 %c1_log = 845 ; 
-c1_log = 2.0 ; 
-c2_log = 1.0 ; 
+c1_log = 2 ; 
+c2_log = 50 ; 
 
 c1_power = 1.0 ; 
 c2_power = 1.0 ; 
 
-gamma1 = 0.5 ; 
+gamma1 = 0.6 ; 
 gamma2 = 4.0 ;
 
 Ia_log_xform = log_xform(Ia, c1_log) ;
@@ -41,7 +41,7 @@ title('Original Image Fig 3.8a')
 
 subplot(1,2,2)
 imshow(Ia_log_xform)
-title('Log transformation Fig 3.8a')
+title(strcat('Log transformation Fig 3.8a c = ', ' ', num2str(c1_log)))
 
 fig2 = figure() ; 
 set(0, 'CurrentFigure', fig2) ; 
@@ -52,8 +52,7 @@ title('Original Image 3.9a')
 
 subplot(1,2,2)
 imshow(Ib_log_xform)
-title('Log Transfomred Image 3.9a')
-
+title(strcat('Log Transfomred Image 3.9a c = ',' ', num2str(c2_log)))
 
 fig3 = figure() ; 
 set(0, 'CurrentFigure', fig3) ; 
@@ -82,11 +81,12 @@ title(strcat('Power Transfomred Image 3.9a c = ',num2str(c2_power), ...
 
 
 function c = optimize_xform_c(I)
-
+    c = 1.0 ;
     while true 
         f = gcf ; 
         close(f) ; 
-        Ia_log_xform = c * log10(1 + I) ;
+        Ia_log_xform = c * log10(1 + im2double(I)) ;
+        Ia_log_xform = shift_image_values(Ia_log_xform) ; 
         imshow(uint8(Ia_log_xform))
         title(strcat('Testing Log Transform at c = ', num2str(c))) ; 
 
@@ -97,7 +97,7 @@ function c = optimize_xform_c(I)
         if strcmp(answer, 'yes')
             break ; 
         else
-            c = c + 0.5 ;
+            c = c + 1.0 ;
         end 
     end
 
@@ -109,9 +109,8 @@ function I_xform = log_xform(I, c)
        I = im2double(I) ;  
     end
     
-    I_xform = c * log10(1 + I) ;
+    I_xform = c .* log10(1 + I) ;
     I_xform = shift_image_values(I_xform) ; 
-    %I_xform = uint8(I_xform) ; 
 end
 
 function I_xform = power_xform(I, c, gamma)

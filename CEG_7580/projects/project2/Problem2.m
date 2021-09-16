@@ -16,14 +16,10 @@ for f = imageFiles
     loadHisto(file) ; 
 end
 
-close all
-% although it is redundant to repeat this loop, I did it to separate the subparts of the problem statement
-
 fig332 = find_files_from_pattern('0332(a)', '*.tif') ; 
 
 % should only be one file found, but what the heck, loop just in case the same regexp comes up again
 % still in big O(n) am I right :)
-
 for f = fig332
     file = f{1} ; 
     [~, baseName, ~] = fileparts(file) ;
@@ -99,6 +95,9 @@ function [hist_in, hist_out, newmap] = loadHisto(filename, varargin)
         subplot(1,3,2)
         bar(N, histgram) ; 
         title('input histogram')
+        xlabel('level bin')
+        ylabel('count')
+        
     end
 
     newmap = histeq(img, gray(256)) ; 
@@ -112,6 +111,8 @@ function [hist_in, hist_out, newmap] = loadHisto(filename, varargin)
         set(0, 'CurrentFigure', fig2)
         rgbplot(newmap) ;
         title(strcat('Transfer Function T(r) Estimate for: ',' ', basename))
+        xlabel('r (input intensity)')
+        ylabel('s (output intensity)')
     end
     
     hist_in = histgram ;
