@@ -1,0 +1,137 @@
+\documentclass[./rarnold_report2.tex]{subfiles}
+
+\begin{document}
+
+% titlepage 
+
+
+\begin{titlepage}
+\begin{Large}
+\begin{center} 
+\textbf{Image Enhancement and Histogram Equalization} \\
+\end{center}
+\end{Large}
+Project 2\\
+CEG 7580\\
+Ryan Arnold \\
+Date Due: 09/17/21 \\
+Date submitted: 09/17/21
+\vspace{24pt}
+%\end{center}
+
+\noindent Declaration Statement: 
+
+\noindent I hereby declare that this Report and the Matlab codes were written/prepared entirely by me based on my own work, and I have not used any material from another Project at another department/ university/college anywhere else, including Wright State. I also declare that I did not seek or receive assistance from any other person and I did not help any other person to prepare their reports or code.  The report mentions explicitly all sources of information in the reference list. I am aware of the fact that violation of these clauses is regarded as cheating and can result in invalidation of the paper with zero grade. Cheating or attempted cheating or assistance in cheating is reportable to the appropriate authority and may result in the expulsion of the student, in accordance with the University and College Policies.
+
+\end{titlepage}
+
+\clearpage
+
+\section*{Part 1 Results}
+
+\begin{enumerate}[a.]
+  \item See the Figures below for the results of applying the log transformation to the input images. 
+  
+  	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"log_spine"}
+	\caption{Matlab results of log transformation of Figure 3.8 a.} 
+	\label{log_spine}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"log_city"}
+	\caption{Matlab results of log transformation of Figure 3.9 a.} 
+	\label{log_city}
+	\end{figure}
+  
+  \item See the Following Figures for the results of applying the power transformations to the input images.
+  
+  	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"power_spine"}
+	\caption{Matlab results of power transformation of fig 3.8 a.} 
+	\label{power_spine}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"power_city"}
+	\caption{Matlab results of power transformation of fig 3.9 a.} 
+	\label{power_city}
+	\end{figure}
+
+\end{enumerate}
+
+\section*{Part 2 Results}
+
+\begin{enumerate}[a.]
+	\item 
+	Here is some text.
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"histo1"}
+	\caption{Matlab results of global histogram equalization on fig 3.16 a.} 
+	\label{histo1}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"transfer1"}
+	\caption{Matlab results of global histogram Transfer Function for fig 3.16 a.} 
+	\label{Tr1}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"histo2"}
+	\caption{Matlab results of global histogram equalization on fig 3.16 b.} 
+	\label{histo2}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"transfer2"}
+	\caption{Matlab results of global histogram Transfer Function for fig 3.16 b.} 
+	\label{Tr2}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"histo3"}
+	\caption{Matlab results of global histogram equalization on fig 3.16 c.} 
+	\label{histo3}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"transfer3"}
+	\caption{Matlab results of global histogram Transfer Function for fig 3.16 c.} 
+	\label{Tr3}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"histo4"}
+	\caption{Matlab results of global histogram equalization on fig 3.16 d.} 
+	\label{histo4}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.25]{"transfer4"}
+	\caption{Matlab results of global histogram Transfer Function for fig 3.16 d.} 
+	\label{Tr4}
+	\end{figure}
+	
+	\clearpage
+	
+	\item  
+\noindent After rescaling the image back to its original size using pixel replication, Most of the details were preserved, as demonstrated in Figure \ref{2b}.  However, it was evident that there was "pixelation" in the restored image.  Moreover, the image appeared fuzzy, especially on the edges.  The reasoning for this is because the pixels were copied throughout uniformly sized regions in rescaling the image.  The original data was only estimated, and this was done using a simple replication approach. The method was bound to not be fully accurate, especially since there is not much continuity between some pixels using this method.  This is why features of the restored image have a fuzzy/blurry appearance.
+
+\end{enumerate}
+
+
+\end{document}
