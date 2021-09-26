@@ -1,14 +1,18 @@
-function Problem4()
+function Problem4(varargin)
     
 %for my sanity, clear all the figures
-close all
+%close all
 
     %setting power law coefficient constants
     c_power = 1.0 ; 
     gamma_power = 0.5 ; 
 
     %find correct file name using substring search
-    files = find_files_from_pattern('0363');
+    if nargin >=1
+        files = {varargin{1}} ;
+    else
+        files = find_files_from_pattern('skeleton_orig', '*.tif') ; 
+    end
 
     %should only be a single file, but to be safe, do a loop
 

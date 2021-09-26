@@ -2,7 +2,7 @@ function I = shift_image_values(img, varargin)
 %% Function to reshift analog values to 0-255 after doing mathematical manipulation
 % accepts an image intensity matrix : img
 
-    gm = double(img) - double(min(min(img))) ; 
+    gm = im2double(img) - (min(min(im2double(img)))) ; 
 
     %figure out k based on the bitness of the image.  Assuming 8-bit
     bits = 8 ; 
