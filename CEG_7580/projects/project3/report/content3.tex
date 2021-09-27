@@ -1,0 +1,215 @@
+\documentclass[./rarnold_report3.tex]{subfiles}
+
+\begin{document}
+
+% titlepage 
+
+
+\begin{titlepage}
+
+\noindent
+\textbf{Project:} Spatial Filtering \\
+\textbf{Project number:} 3\\
+\textbf{Course number:}CEG 7580\\
+\textbf{Student:} Ryan Arnold \\
+\textbf{Date Due:} 09/27/21 \\
+\textbf{Date submitted:} 09/27/21
+\vspace{24pt}
+%\end{center}
+
+\noindent \textbf{Declaration Statement: }
+
+\noindent I hereby declare that this Report and the Matlab codes were written/prepared entirely by me based on my own work, and I have not used any material from another Project at another department/ university/college anywhere else, including Wright State. I also declare that I did not seek or receive assistance from any other person and I did not help any other person to prepare their reports or code.  The report mentions explicitly all sources of information in the reference list. I am aware of the fact that violation of these clauses is regarded as cheating and can result in invalidation of the paper with zero grade. Cheating or attempted cheating or assistance in cheating is reportable to the appropriate authority and may result in the expulsion of the student, in accordance with the University and College Policies.
+
+\end{titlepage}
+
+\clearpage
+\section*{Abstract}
+
+\noindent The intent of this project was to implement spatial filtering techniques to enhance images.  Many different filters were explored.  In the first problem, median filtering was compared against average filtering on an image with salt and pepper noise.  In the second and third problems, different filters were applied to a blurred image of the North Pole of the moon.  The image was enhanced using the following different techniques: laplacian filters, unsharp masking, and high-boost filtering.  Finally, a variety of spatial filtering techniques were combined to sharpen and emphasize detail in a nuclear bone scan image.  This included strategically combining laplacian, sobel gradient, and box filters in conjunction with a power law transform to fully refine the original image.
+
+\clearpage
+
+\section*{Technical Discussion}
+
+\noindent The task of the first problem entailed comparing median and averaging filters, applied to an image with salt and pepper noise.  A [3, 3] mask size was used when implementing both of these filters.  The median filter replaced the center value of the sliding mask window with the median of the 3 by 3 pixel area. The averaging filter operated the same way, except it replaced the center value with the average value of the pixels in the 3 by 3 sliding mask window.
+\\ \\
+\noindent The second problem involved improving a blurry image of the North Pole of the Moon by implementing laplacian filtering techniques.  The Laplacian general equation can be represented by Equation \eqref{laplace} below.  
+
+\begin{equation}
+\label{laplace}
+g(x,y) = f(x,y) +c\left[\nabla^{2}f(x,y)  \right]
+\end{equation}
+
+\noindent First a laplace filter was applied to the input image.  The resulting image was then multiplied by $c=-1$, and subsequently added back to the original image.  Two different laplacian kernels were applied, as shown in Figure \ref{lap kernels}.a and Figure \ref{lap kernels}.b. The third problem entailed enhancing the same blurred moon image, except instead of using laplacian filters, the unsharp masking and high-boost filtering techniques were used, both of which used a lowpass gaussian fiter to produce a blurred image component.  The general Equations are shown in Equations \eqref{mask} and \eqref{unsharp}, where $\bar{f}(x,y)$ is the gaussian blurred image component.  
+
+\begin{equation}
+\label{mask}
+g_{mask}(x,y) = f(x,y) - \bar{f}(x,y)
+\end{equation}
+
+\begin{equation}
+\label{unsharp}
+g(x,y) = f(x,y) + kg_{mask}
+\end{equation}
+
+\noindent The fourth problem entailed combining multiple spatial filtering techniques to enhance a nuclear skeletal image. A Laplacian filter was applied using the kernel in Figure \ref{lap kernels}.c.  A Sobel Gradient Filter was also applied using the approximation in Equation \eqref{gradient} below.
+
+\begin{equation}
+\label{gradient}
+M(x,y) \approx |g_x| + |g_y|
+\end{equation}
+
+\noindent The implementation of the sobel gradient was performed using the kernels in Figures \ref{sobels}.a and \ref{sobels}.b.  In addition, a [5, 5] box filter was used for smoothing, and was implemented with the kernel in Figure \ref{box_kernel}.  Finally, a power law was applied using Equation \eqref{power} below, using $\gamma = 0.5$ and $c=1.0$.
+\begin{equation}
+\label{power}
+g(x,y) = c*f(x,y)^{\gamma}
+\end{equation}
+
+\begin{center}\underline{Listing of spatial filtering kernels:}\end{center}
+
+\begin{figure}[!htbp]	
+	\centering
+	\begin{subfigure}{0.33\textwidth}
+	\centering
+	$\begin{bmatrix}
+	0 & 1 & 0 \\
+	1 & -4 & 1 \\
+	0 & 1 & 0
+	\end{bmatrix}$
+	\caption{Laplace Kernel Fig 3.45a}
+	\end{subfigure}%	
+	\begin{subfigure}{0.33\textwidth}
+	\centering
+	$\begin{bmatrix}
+	1 & 1 & 1 \\
+	1 & -8 & 1 \\
+	1 & 1 & 1
+	\end{bmatrix}$
+	\caption{Laplace Kernel Fig 3.45b}
+	\end{subfigure}%	
+	\begin{subfigure}{0.33\textwidth}
+	\centering
+	$\begin{bmatrix}
+	-1 & -1 & -1 \\
+	-1 & 8 & -1 \\
+	-1 & -1 & -1
+	\end{bmatrix}$
+	\caption{Laplace Kernel Fig 3.45c}
+	\end{subfigure}	
+	\caption{Laplacian Kernels Obtained from 4th ed. of Textbook.}
+	\label{lap kernels}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\begin{subfigure}{0.5\textwidth}
+	\centering
+	$\begin{bmatrix}
+	-1 & -2 & -1 \\
+	0 & 0 & 0 \\
+	1 & 2 & 1
+	\end{bmatrix}$
+	\caption{Sobel Gradient gx Kernel}
+	\label{sobel_x}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+	\centering
+	$\begin{bmatrix}
+	-1 & 0 & 1 \\
+	-2 & 0 & 2 \\
+	-1 & 0 & 1
+	\end{bmatrix}$
+	\caption{Sobel Gradient gy Kernel}
+	\label{sobel_y}
+	\end{subfigure}
+	\caption{Gradient Kernels Obtained from 4th ed. of Textbook.}
+	\label{sobels}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+$\mathlarger{\frac{1}{MN}} 
+\begin{bmatrix}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1
+\end{bmatrix}$
+\caption{Box Filter Kernel for Mask Size of M by N.}
+\label{box_kernel}
+\end{figure}
+
+\clearpage
+
+\section*{Results}
+  	
+  	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.40]{"avg_median"}
+	\captionsetup{justification=centering}
+	\caption{Problem 1 - Average Filter vs Median Filter Results. (Left) Original (Center) Averaging Filter (Right) Median Filter.} 
+	\label{salt_and_pepper}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.50]{"moon_2"}
+	\caption{Problem 2 - Laplacian of Blurry Moon Results.} 
+	\label{moon2}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.50]{"moon_3"}
+	\caption{Problem 3 - Unsharp Masking and High-Boost Filtering Results.} 
+	\label{moon3}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.45]{"skeleton"}
+	\caption{Problem 4 - Combination of Spatial Filtering Techniques Applied to Skeleton Image Results.} 
+	\label{skeleton}
+	\end{figure}
+
+\clearpage
+
+\section*{Discussion}
+
+\noindent The results from Problem 1 indicate that median filtering is superior to average filtering when salt and pepper noise is present.  This is demonstrated in Figure \ref{salt_and_pepper}.  The averaging filter is influenced by any noise present in the local averaging pixel regions, whereas the median filter is going to be representative of the general pixel values of the image.  The noise in this case would not introduce bias to the median calculation, as it would in the case of averaging.  
+\\ \\
+\noindent The results from Problem 2 show that the laplacian filter was able to enhance details in the blurred moon image.  This is shown in Figure \ref{moon2}.  A laplacian helps highlight sharp intensity transitions, which is useful in the case where details are blurred, such as in the case of the blurred moon input image.  Visually, it appeared that the kernel in Figure \ref{lap kernels}.a was more appealing than the results using the kernel in Figure \ref{lap kernels}.b.
+\\ \\
+\noindent The results from Problem 3 that were generated using unsharp masking and high-boost filtering are shown in Figure \ref{moon3}. It is evident that the unsharp masking achieved detail sharpening by subtracting the blurred image from the original image, as shown in the center image of Figure \ref{moon3}.  The constant coefficient $k=2$ from Equation \eqref{unsharp} was chosen for the high-boost filtering technique via trial and error.  In the case of unsharp masking, the $k$ term is simply 1.  The high-boost results in the image on the right of Figure \ref{moon3} indicate that the finer details were further exemplified, due to the accentuation caused by increasing the scaling factor.  
+\\ \\
+Figure \ref{skeleton} shows the results of applying various spatial filtering techniques to enhance the input skeletal image.  The final result in Figure \ref{skeleton}.h shows that the filtering techniques were able to reduce noise contribution to the image, improve bone detail visually, and bring out tissue detail that was not originally present in the original image, due to a low dynamic range of dark levels.   The process was as follows : First a laplacian was applied to the original image, and multiplied by a smoothened gradient (smoothening was achieved via a gaussian lowpass function), which is displayed in Figure \ref{skeleton}.b ; In \ref{skeleton}.c, the mask in Figure \ref{skeleton}.b was added to the original image, effectively sharpening it; In Figure \ref{skeleton}.d, a sobel gradient (using kernels in Figure \ref{sobels}.a and \ref{sobels}.b) was applied to the original image; Figure \ref{skeleton}.e shows the sobel gradient smoothened by using the box kernel shown in Figure \ref{box_kernel}; Figure \ref{skeleton}.f is the product of Figure \ref{skeleton}.b and \ref{skeleton}.e; Figure \ref{skeleton}.g shows the sum of the original image and the mask in \ref{skeleton}.f, further sharpening the image and reducing noise contribution; Finally, to expand the dynamic range of darker levels, a power law transformation (Equation \eqref{power}) was applied to Figure \ref{skeleton}.g to obtain the final result in Figure \ref{skeleton}.h.  
+
+\clearpage
+
+\section*{Appendix}
+\subsection*{Program Listings}
+
+\noindent \textbf{Script File Listing:}
+
+\noindent Main.m \\
+Problem1.m \\
+Problem2.m \\
+Problem3.m \\
+Problem4.m \\
+get\_ filter\_ handle.m \\
+power\_ xform.m \\
+find\_ files\_ from\_ pattern.m \\
+shift\_ image\_ values.m \\
+
+
+\noindent \textbf{Instructions to Run} \\
+
+\noindent The most important detail in setting up this project to be functional is to ensure that all of the supplied image files are stored in the same root directory as all of the *.m scripts.  The algorithms assume that the files will be in the same directory to run properly.  As previously mentioned, all the scripts should be placed in the same directory.  The sub-problems are solved in the scripts: Problem1.m, Problem2.m, Problem3.m, and Problem4.m .  The Main.m script calls all routines in the same script, thus solving all sub-problems, while only needing to run one driver script.  Therefore, it is recommended to run the Main.m script to produce all of the figures at once.  If the image files are in a directory other than the root directory of the scripts, then the image filename(s) need to be supplied as strings as the argument to each of the ProblemX.m routines, where X represents the problem number (1 - 4).  The code function dependencies are the following scripts: get\_ filter\_ handle.m, power\_ xform.m, find\_ files\_ from\_ pattern.m, and shift\_ image\_ values.m.
+
+\end{document}

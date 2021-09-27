@@ -29,7 +29,7 @@ function Problem4(varargin)
         %display original image
         subplot(2,4, 1)
         imshow(I) 
-        title('Original Image')
+        title('a) Original Image')
 
         I_double = im2double(I) ; 
 
@@ -47,7 +47,7 @@ function Problem4(varargin)
         %plot laplacian transform
         subplot(2,4, 2)
         imshow(I_laplace_int)
-        title('Laplacian of Original Image')
+        title('b) Laplacian of Original Image')
 
         % this is the extra step that the book does to obtain the blurred image in c)
         %modify laplacian by virtue of smoothing and masking (we will use gaussian for lowpass here)
@@ -63,7 +63,7 @@ function Problem4(varargin)
 
         subplot(2,4, 3)
         imshow(I_lap_plus_orig_int)
-        title('Laplace + Original')
+        title('c) Laplace + Original')
         
         %commence part d) hommies
         
@@ -72,7 +72,7 @@ function Problem4(varargin)
 
         subplot(2,4, 4)
         imshow(I_sobel_int)
-        title('Sobel Gradient Image')
+        title('d) Sobel Gradient Image')
 
         %part e) baby
         %now smooth the sobel gradient image using a 5x5 box filter (default is 5x5 in filter handle)
@@ -82,7 +82,7 @@ function Problem4(varargin)
         %display smoothed sobel gradient image
         subplot(2,4, 5)
         imshow(I_smooth_sobel_int)
-        title('5X5 Box Filtered Sobel Gradient Image')
+        title('e) 5X5 Box Filtered Sobel Gradient Image')
 
         % part f) home stretch 
         % multiply the result of part b) with part e)
@@ -92,7 +92,7 @@ function Problem4(varargin)
         %display results
         subplot(2,4, 6)
         imshow(Lap_times_smooth_sobel_int) ;
-        title('Product of Laplace and Smoothed Gradient Image')
+        title('f) Product of Laplace and Smoothed Gradient Image')
 
         % part g) I can almost taste it ...
         % add part f) to original image
@@ -102,7 +102,7 @@ function Problem4(varargin)
         %display part f results
         subplot(2,4, 7)
         imshow(I_orig_plus_f_int)
-        title('Part f) Mask Plus Original')
+        title('g) Part f. Mask Plus Original')
 
         % part h) do the power law transform as the last step
         % perform power law using function on previous result
@@ -112,7 +112,7 @@ function Problem4(varargin)
 
         subplot(2,4, 8)
         imshow(I_final_int)
-        title('Final Image after Power Xform')
+        title('h) Final Image after Power Xform')
 
         % BOOM TOUCHDOWN !
     end
