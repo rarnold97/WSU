@@ -37,7 +37,8 @@ function Problem5(varargin)
 
         % display result of high pass filter
         subplot(1,3,2)
-        imshow(uint8(Gxy_double))
+        %imshow(uint8(Gxy_double))
+        imshow(shift_image_values(Gxy_double))
         title('Result of High Pass Filtering')
 
         % use thresholding 
