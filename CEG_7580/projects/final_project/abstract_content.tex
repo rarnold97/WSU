@@ -1,0 +1,55 @@
+\documentclass[./abstract_proposal.tex]{subfiles}
+
+\begin{document}
+
+% titlepage 
+
+
+\begin{titlepage}
+
+\noindent
+\centering \Huge \textbf{Final Project Abstract} \\
+CEG 7580\\
+Ryan Arnold \\
+10/15/21
+\vspace{24pt}
+%\end{center}
+
+\end{titlepage}
+
+\clearpage
+\section*{Abstract}
+
+\noindent Image edge detection is important for several applications including medical imaging, pattern recognition algorithms, computer vision algorithms, etc.  More generally, edges are prominent details used in image feature extraction.  An edge is typically defined as a region of grayscale intensities that exhibit step and dirac structure.  Traditional edge detection algorithms, including those that employ the Robert operator, Sobel operator, Prewitt operator, etc., suffer from the presence of noise associated with real images.  Wavelets offer a solution to the issue of noise, since wavelet functions can properly separate high and low frequency components of an image.  Typically, noise is associated with higher frequency components of the image [thresholding paper].  Other methods of edge detection that offer potential are The Canny operator and Thresholding. Fusion techniques, combining with wavelet transforms with the previously mentioned techniques, can offer better performance and remedy some of the shortcomings associated with using each method exclusively.  It has been shown by <>, that combining these methods can result in enhanced image edge detection compared to traditional methods described in literature.
+\\ \\
+\noindent For the final project, I propose to replicate some of the fusion techniques demonstrated by <>.  This would entail combining wavelet transformation functions with methods such as the Canny operator, or thresholding, to achieve better edge detection performance than using wavelets exclusively. The general approach would be the following: 
+
+\begin{enumerate}
+\item Artificially inject Gaussian noise to an input image, and then blur the image.
+\item Detect edges using wavelet transformation, and subsequently optimizing local modulus arguements.
+\item Detect edges using the Canny Operator or Thresholding.
+\item combine the edge images from wavelets and The Canny Operator/Thresholding.
+\item Reconstruct image from using an inverse wavelet transform.
+\end{enumerate}
+
+\noindent I aim to replicate results similar to Figure 1 in <>, Figure 2 in <>, and Figure 9 in <>, using the well-known image: Barbara, and a magnified rice grain image.  It could also be insightful to use a custom image of my choosing to demonstrate the effectiveness of the algorithms I explore and develop throughout this project.   
+
+\clearpage
+
+\begin{thebibliography}{9}
+\bibitem{edge_canny_2009}
+Cai-Xia Deng, Ting-Ting Bai and Ying Geng, "Image edge detection based on wavelet transform and Canny operator," 2009 International Conference on Wavelet Analysis and Pattern Recognition, 2009, pp. 355-359, doi: 10.1109/ICWAPR.2009.5207469.
+
+\bibitem{edge_canny_2007}
+Jie Hou, Jin-Hua Ye and Sha-Sha Li, "Application of Canny combining and wavelet transform in the bound of step-structure edge detection," 2007 International Conference on Wavelet Analysis and Pattern Recognition, 2007, pp. 1635-1637, doi: 10.1109/ICWAPR.2007.4421714.
+
+\bibitem{thresh}
+C. WANG, C. -X. DENG and Z. -B. HU, "An Improved Wavelet Threshold Function And Its Application In Image Edge Detection," 2019 International Conference on Wavelet Analysis and Pattern Recognition (ICWAPR), 2019, pp. 1-7, doi: 10.1109/ICWAPR48189.2019.8946469.
+
+
+\end{thebibliography}
+
+
+
+
+\end{document}
