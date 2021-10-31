@@ -20,36 +20,28 @@ Ryan Arnold \\
 \clearpage
 \section*{Abstract}
 
-\noindent Image edge detection is important for several applications including medical imaging, pattern recognition algorithms, computer vision algorithms, etc.  More generally, edges are prominent details used in image feature extraction.  An edge is typically defined as a region of grayscale intensities that exhibit step and dirac structure.  Traditional edge detection algorithms, including those that employ the Robert operator, Sobel operator, Prewitt operator, etc., suffer from the presence of noise associated with real images.  Wavelets offer a solution to the issue of noise, since wavelet functions can properly separate high and low frequency components of an image.  Typically, noise is associated with higher frequency components of the image [thresholding paper].  Other methods of edge detection that offer potential are The Canny operator and Thresholding. Fusion techniques, combining with wavelet transforms with the previously mentioned techniques, can offer better performance and remedy some of the shortcomings associated with using each method exclusively.  It has been shown by <>, that combining these methods can result in enhanced image edge detection compared to traditional methods described in literature.
+\noindent Image edge detection is important for several applications including medical imaging, pattern recognition algorithms, computer vision algorithms, etc.  More generally, edges are prominent details used in image feature extraction because of their significant variation in gray level.  An edge is typically defined as a region of grayscale intensities that exhibit step and dirac structure.  Traditional edge detection algorithms, including those that employ the Robert operator, Sobel operator, Prewitt operator, etc., suffer from the presence of noise associated with real images.  Moreover, the conventional methods typically employ smaller kernels, which makes it more difficult to identify edge features if they are surrounded with noise. Wavelets offer a solution to image edge detection, especially images with noise, since wavelet scaling functions can properly separate high and low frequency components of an image.  Typically, noise is associated with higher frequency components of the image.  The separability of wavelets also make their implementation more computationally efficient than other methods with higher complexity. 
 \\ \\
-\noindent For the final project, I propose to replicate some of the fusion techniques demonstrated by <>.  This would entail combining wavelet transformation functions with methods such as the Canny operator, or thresholding, to achieve better edge detection performance than using wavelets exclusively. The general approach would be the following: 
+\noindent Another prominent method of edge detection that offers clear edge separation is The Canny operator, which can be used as a basis of performance comparison to wavelet based methods, including the method proposed for this project. One drawback of using wavelet based techniques is that they retain little directional information as a consequence of the tensor-product of 1D vertical and horizontal wavelet functions.  Furthermore, wavelet techniques sufficiently capture horizontal and vertical edges, but do not always adequately capture more complex edge behavior.  Zhen et al. proposed a method to improve this caveat by using directional wavelet transforms based on lattice theory, redefining gradient magnitude, and using a novel algorithm for non-maximal suppression.  The main benefit of this method is that it maintains relatively simple computational complexity and still retains edge detection accuracy \cite{redef_gradient}. 
+\\ \\
+\noindent For the final project, I propose to replicate the directional wavelet and gradient magnitude techniques demonstrated by Zhang et al \cite{redef_gradient}.  This will entail using thresholding in combination with a redefined gradient magnitude to identify candidate edges.  To enhance detection, directional information will be obtained through applying directional wavelet transforms.  In addition, I aim to apply the Canny Operator method for the purpose of algorithm performance comparison, as it is a well-known method of image edge detection.  The general approach would be the following \cite{redef_gradient}: 
 
 \begin{enumerate}
-\item Artificially inject Gaussian noise to an input image, and then blur the image.
-\item Detect edges using wavelet transformation, and subsequently optimizing local modulus arguements.
-\item Detect edges using the Canny Operator or Thresholding.
-\item combine the edge images from wavelets and The Canny Operator/Thresholding.
-\item Reconstruct image from using an inverse wavelet transform.
+\item \textbf{Pre-smooth the image:} noise will be reduced in the input images by using a smoothing filter.
+\item \textbf{Enhance edges of the image:} convolve the input image with a gradient operator in both the horizontal and vertical directions. Using this information, the gradient magnitude and direction can also be computed.
+\item \textbf{Non-maximum suppression:} For each pixel, retain if it is a local maximum along the gradient direction. 
+\item \textbf{Locate and link edges adopting a double threshold scheme:} select upper and lower thresholds to identify candidate edges by comparing to gradient magnitude.  Directional information will also be applied (e.g., directional wavelet transforms) in candidate edge selection. 
 \end{enumerate}
 
-\noindent I aim to replicate results similar to Figure 1 in <>, Figure 2 in <>, and Figure 9 in <>, using the well-known image: Barbara, and a magnified rice grain image.  It could also be insightful to use a custom image of my choosing to demonstrate the effectiveness of the algorithms I explore and develop throughout this project.   
+
+\noindent I aim to replicate results similar to Figures 1 and 6 \cite{redef_gradient}.  The images include well-known signal processing example images: Barbara, peppers, and an additional image containing an assortment of polygonal shapes.  The first two images can be easily obtained from multiple sources.  The latter image of the list is provided through the IEEE database.   
 
 \clearpage
 
 \begin{thebibliography}{9}
-\bibitem{edge_canny_2009}
-Cai-Xia Deng, Ting-Ting Bai and Ying Geng, "Image edge detection based on wavelet transform and Canny operator," 2009 International Conference on Wavelet Analysis and Pattern Recognition, 2009, pp. 355-359, doi: 10.1109/ICWAPR.2009.5207469.
-
-\bibitem{edge_canny_2007}
-Jie Hou, Jin-Hua Ye and Sha-Sha Li, "Application of Canny combining and wavelet transform in the bound of step-structure edge detection," 2007 International Conference on Wavelet Analysis and Pattern Recognition, 2007, pp. 1635-1637, doi: 10.1109/ICWAPR.2007.4421714.
-
-\bibitem{thresh}
-C. WANG, C. -X. DENG and Z. -B. HU, "An Improved Wavelet Threshold Function And Its Application In Image Edge Detection," 2019 International Conference on Wavelet Analysis and Pattern Recognition (ICWAPR), 2019, pp. 1-7, doi: 10.1109/ICWAPR48189.2019.8946469.
-
-
+\bibitem{redef_gradient}
+Zhen Zhang, Siliang Ma, Hui Liu, Yuexin Gong, An edge detection approach based on directional wavelettransform, Computers \& Mathematics with Applications, Volume 57, Issue 8, 2009, Pages 1265-1271,
+ISSN 0898-1221, https://doi.org/10.1016/j.camwa.2008.11.013. (https://www.sciencedirect.com/science/article/pii/S0898122109000492)
 \end{thebibliography}
-
-
-
 
 \end{document}

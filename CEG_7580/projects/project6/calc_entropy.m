@@ -18,7 +18,7 @@ MN = dims(1) * dims(2) ;
 A_int = uint8(A) ; 
 
 % find the unique symbols in the data array
-C = unique(A) ; 
+C = unique(A_int) ; 
 
 H = zeros(1, length(C)) ; 
 
