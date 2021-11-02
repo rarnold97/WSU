@@ -14,7 +14,10 @@ function err = RMS(I, fhat)
     end
 
     I_flat = reshape(I, 1, dims(1)*dims(2)) ; 
-    hat_flat = reshape(fhat, 1, dims(1)*dims(2)) ;
-    err = rms(hat_flat - I_flat) ; 
+    hat_flat = reshape(fhat, 1, dims_hat(1)*dims_hat(2)) ;
+    
+    e = hat_flat - I_flat ; 
+    
+    err = sqrt( sum(e.^2) / length(e))  ;
 
 end

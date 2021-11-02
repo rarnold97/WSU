@@ -1,4 +1,4 @@
-function ms = snrms(fhat, f)
+function ms = snrms(f, fhat)
 %% 
 % computes SNRms of a given array of image values, f, and its decompressed estimate, fhat
 % fhat -> estiamated image values
