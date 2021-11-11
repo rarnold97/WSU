@@ -11,7 +11,7 @@
 \centering \Huge \textbf{Final Project Abstract} \\
 CEG 7580\\
 Ryan Arnold \\
-10/15/21
+11/08/21
 \vspace{24pt}
 %\end{center}
 
@@ -20,28 +20,31 @@ Ryan Arnold \\
 \clearpage
 \section*{Abstract}
 
-\noindent Image edge detection is important for several applications including medical imaging, pattern recognition algorithms, computer vision algorithms, etc.  More generally, edges are prominent details used in image feature extraction because of their significant variation in gray level.  An edge is typically defined as a region of grayscale intensities that exhibit step and dirac structure.  Traditional edge detection algorithms, including those that employ the Robert operator, Sobel operator, Prewitt operator, etc., suffer from the presence of noise associated with real images.  Moreover, the conventional methods typically employ smaller kernels, which makes it more difficult to identify edge features if they are surrounded with noise. Wavelets offer a solution to image edge detection, especially images with noise, since wavelet scaling functions can properly separate high and low frequency components of an image.  Typically, noise is associated with higher frequency components of the image.  The separability of wavelets also make their implementation more computationally efficient than other methods with higher complexity. 
+\noindent Image edge detection is important for several applications including medical imaging, pattern recognition algorithms, computer vision algorithms, radar ISAR feature detection, etc.  More generally, edges are prominent details used in image feature extraction because of their significant variation in gray level.  An edge is typically defined as a region of grayscale intensities that exhibit step, ramp, or roof profiles \cite{book}.  Traditional edge detection algorithms, including those that employ the Sobel Operator, Prewitt Operator, Canny Operator, and 2D-discrete wavelet transforms (DWT) transforms, are limited in terms of describing directional information.  In the case of a 2D-DWT, only vertical, horizontal, and diagonal details can be analyzed in more depth.  In addition to directional limitation, traditional algorithms can suffer from the presence of noise in the input image data.  Gabor Wavelets (GW) offer a solution to these challenges.  Gabor wavelets employ a set of basis functions that parameterize spatial frequency and range of directions [0-2$\pi$].  Thus, noise interference can be reduced by optimizing the frequency parameter and directional details can be revealed by optimizing the orientation parameter.  The drawback of Gabor Wavelets is that their implementation is computationally intensive, especially considering the data needs to be transformed using an fft algorithm, and subsequently inverted using an ifft algorithm.  Jiang et al. offer a novel solution to this that simplifies computational overhead.  This entails using a Simplified Gabor Wavelet (SGW), and employing quantization of Gabor function masks.  A simpler set of filter masks can then be generated and convolved with the input image, reducing the number of computations and eliminating the need to perform fft operations.  Furthermore, this reduces computation time and minimally reduces feature extraction performance \cite{main_paper}.
 \\ \\
-\noindent Another prominent method of edge detection that offers clear edge separation is The Canny operator, which can be used as a basis of performance comparison to wavelet based methods, including the method proposed for this project. One drawback of using wavelet based techniques is that they retain little directional information as a consequence of the tensor-product of 1D vertical and horizontal wavelet functions.  Furthermore, wavelet techniques sufficiently capture horizontal and vertical edges, but do not always adequately capture more complex edge behavior.  Zhen et al. proposed a method to improve this caveat by using directional wavelet transforms based on lattice theory, redefining gradient magnitude, and using a novel algorithm for non-maximal suppression.  The main benefit of this method is that it maintains relatively simple computational complexity and still retains edge detection accuracy \cite{redef_gradient}. 
-\\ \\
-\noindent For the final project, I propose to replicate the directional wavelet and gradient magnitude techniques demonstrated by Zhang et al \cite{redef_gradient}.  This will entail using thresholding in combination with a redefined gradient magnitude to identify candidate edges.  To enhance detection, directional information will be obtained through applying directional wavelet transforms.  In addition, I aim to apply the Canny Operator method for the purpose of algorithm performance comparison, as it is a well-known method of image edge detection.  The general approach would be the following \cite{redef_gradient}: 
+\noindent For the final project, I propose to employ GW edge detection, and compare it to the novel SGW approach proposed by Jiang et al. \cite{main_paper}.  In addition to this, I will compare the results to well-known edge detection methods: The Canny Operator, LoG edge detector, and Sobel Edge Detector. Prior to getting the final results, the authors exploit different numbers of quantization levels to generate the simplified GW filter masks and using different input frequency levels to the SGW implementation.  I will similarly replicate this process by reproducing figures similar to Figures 3-6.  I will also attempt to replicate the final results, using the optimal parameters chosen by the authors, as displayed in Figure 8.  Finally, the SGW edge detection method is compared to other methods (Sobel, LoG, Canny) using a variety of test images in Figure 10.  I will perform a similar analysis on the 'peppers', 'lighthouse', and 'parrots,' images exclusively, since these are provided in the Matlab Toolbox images.  Finally, I will also perform a run-time analysis to produce results similar to those in Table III.  The process can be outlined as follows:
+
+
 
 \begin{enumerate}
-\item \textbf{Pre-smooth the image:} noise will be reduced in the input images by using a smoothing filter.
-\item \textbf{Enhance edges of the image:} convolve the input image with a gradient operator in both the horizontal and vertical directions. Using this information, the gradient magnitude and direction can also be computed.
-\item \textbf{Non-maximum suppression:} For each pixel, retain if it is a local maximum along the gradient direction. 
-\item \textbf{Locate and link edges adopting a double threshold scheme:} select upper and lower thresholds to identify candidate edges by comparing to gradient magnitude.  Directional information will also be applied (e.g., directional wavelet transforms) in candidate edge selection. 
+\item select specified frequency, $\omega$ and orientation, $\theta$.  
+\item Determine quantization levels for Gabor Wavelets, based on values produced by function acted on a Subspace.
+\item Generate filtering masks for all orientations and frequencies.
+\item Convolve with image, $I(x,y).$
+\item for a set of orientations and frequencies, extract the maximum value of the variations of the operator.
+\item Apply hysteresis thresholding to separate strong and weak edges.
 \end{enumerate}
 
-
-\noindent I aim to replicate results similar to Figures 1 and 6 \cite{redef_gradient}.  The images include well-known signal processing example images: Barbara, peppers, and an additional image containing an assortment of polygonal shapes.  The first two images can be easily obtained from multiple sources.  The latter image of the list is provided through the IEEE database.   
+(See attached for the reference input images to be used for this project). 
 
 \clearpage
 
 \begin{thebibliography}{9}
-\bibitem{redef_gradient}
-Zhen Zhang, Siliang Ma, Hui Liu, Yuexin Gong, An edge detection approach based on directional wavelettransform, Computers \& Mathematics with Applications, Volume 57, Issue 8, 2009, Pages 1265-1271,
-ISSN 0898-1221, https://doi.org/10.1016/j.camwa.2008.11.013. (https://www.sciencedirect.com/science/article/pii/S0898122109000492)
+\bibitem{main_paper}
+W. Jiang, K. Lam and T. Shen, "Efficient Edge Detection Using Simplified Gabor Wavelets," in IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics), vol. 39, no. 4, pp. 1036-1047, Aug. 2009, doi: 10.1109/TSMCB.2008.2011646.
+
+\bibitem{book}
+Gonzalez, Rafael C., Woods, Richard E., \textit{Digital Image Processing.} \textit{4th ed.}. (2018). Pearson.  
 \end{thebibliography}
 
 \end{document}
