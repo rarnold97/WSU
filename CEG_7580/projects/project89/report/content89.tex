@@ -1,0 +1,167 @@
+\documentclass[./rarnold_project_89.tex]{subfiles}
+
+\begin{document}
+
+% titlepage 
+
+
+\begin{titlepage}
+
+\noindent
+\textbf{Project:} Image Compression \\
+\textbf{Project number:} 6\\
+\textbf{Course number:} CEG 7580\\
+\textbf{Student:} Ryan Arnold \\
+\textbf{Date Due:} 11/01/21 \\
+\textbf{Date submitted:} 11/02/21 (was granted a 1 day extension)
+\vspace{24pt}
+%\end{center}
+
+\noindent \textbf{Declaration Statement: }
+
+\noindent I hereby declare that this Report and the Matlab codes were written/prepared entirely by me based on my own work, and I have not used any material from another Project at another department/ university/college anywhere else, including Wright State. I also declare that I did not seek or receive assistance from any other person and I did not help any other person to prepare their reports or code.  The report mentions explicitly all sources of information in the reference list. I am aware of the fact that violation of these clauses is regarded as cheating and can result in invalidation of the paper with zero grade. Cheating or attempted cheating or assistance in cheating is reportable to the appropriate authority and may result in the expulsion of the student, in accordance with the University and College Policies.
+
+\end{titlepage}
+
+\clearpage
+\section*{Abstract}
+
+\noindent The primary intent of this project was to explore different compression techniques and evaluate their performance based on root-mean-square error and mean-square signal-to-noise ratio.  The first method of compression explored was Huffman encoding, a lossless method.  Huffman encoding was explored using different quantization schemes, and applied to an input sequence to decode the constituent symbols.  The lossy methods explored were transform coding and wavelet coding.  In the case of transform coding, DCT and DFT transformations were applied in conjunction with N-largest coefficient retention.    The wavelet method involved reconstructing an input image at different wavelet decomposition levels, using only the approximation coefficients.  It was found that the DFT transform outperformed the DCT and wavelet methods.
+
+\clearpage
+
+\section*{Technical Discussion}
+
+\noindent Image entropy can be calculated according to Equation \eqref{entropy}.  This entails computing the $log_2$ of the sum of probabilities of distinct symbol occurrences.  Problem 1 entailed implementing this equation as a Matlab function.  In the textbook Problem 8.09, Huffman encoding was used to compress and decode a sequences of symbols.  The entropy was then computed and compared using different compression strategies, such has pair-wise quantization, and a run-length like (differences) quantization. For problem 8.09, The Huffman table from Fig 8.8 was used to decode a sequence of encoded symbols.
+\\ \\
+\noindent Compression performance was evaluated for both discrete cosine and sine transformation schemes, using 8 by 8 non-overlapping blocks, and N-largest coding bit allocation.  In addition, N-largest coding was examined using a DCT transform implementation until an N was chosen where the reconstruction error became objectionable.  The performance was evaluated by respectively comparing root-mean-square $(rms)$ error and mean-square signal-to-noise ratio $(SNR_{ms})$.  These were computed according to Equations \eqref{rms} and \eqref{snrms}.  
+\\ \\
+\noindent Finally, wavelet coding was implemented using discrete wavelet transform algorithms provided through the Matlab Wavelet Toolbox.  To achieve maximal compression, all of the detail coefficients were truncated.  Therefore, the image was reconstructed using multi-level wavelet reconstruction, exclusively using the approximation coefficients.  The performance was evaluated using the $rms$ and $SNR_{ms}$
+
+
+\begin{equation}
+\label{entropy}
+\tilde{H} = \sum_{k=0}^{L-1} p_{r}(r_{k})log_2p_r(r_k) 
+\end{equation}
+
+\begin{equation}
+\label{rms}
+e_{rms} = \left[ \frac{1}{MN} \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} [\hat{f(x,y)} - f(x,y)]^{2}\right ]^{1/2}
+\end{equation}
+
+\begin{equation}
+\label{snrms}
+SNR_{rms} = \frac{\sum_{x=0}^{M-1}\sum_{y=0}^{N-1} \hat{f}(x,y)^2}{\sum_{x=0}^{M-1}\sum_{y=0}^{N-1} [\hat{f}(x,y) - f(x,y)]^2}
+\end{equation}
+
+
+\clearpage
+
+\section*{Results}
+	
+\begin{table}[htbp]
+\centering
+\caption{Entropy Results from Problem 1.}
+\label{part1}
+\begin{tabular}{|c|c|c|}
+\hline
+Figure & Entropy (bits/pixel)& Textbook Entropy (bits/pixel)\\ \hhline{|=|=|=|}
+8.01(a)& 1.661 & 1.66\\ \hline
+8.01(b)& 8 & 8\\ \hline
+8.01(c)& 1.566 & 1.566\\ \hline
+\end{tabular}
+\end{table}	
+
+\begin{table}[htbp]
+\centering
+\caption{Error Results From Problem 3.}
+\label{part3}
+\begin{tabular}{|c|c|c|}
+\hline
+Description & RMS & SNRms\\ \hhline{|=|=|=|}
+DFT 8-largest& 0.0279 & 263.4\\ \hline
+DCT 8-largest& 0.0437 & 106.7\\ \hline
+DCT 1-largest& 0.0624 & 52.0 \\ \hline
+\end{tabular}
+\end{table}	
+
+\begin{table}[htbp]
+\centering
+\caption{Error Results From Problem 4.}
+\label{part4}
+\begin{tabular}{|c|c|c|}
+\hline
+Wavelet Decomposition Level & RMS & SNRms\\ \hhline{|=|=|=|}
+2& 0.0424 & 113.7\\ \hline
+3& 0.0624 & 52.0\\ \hline
+4& 0.0857 & 27.0 \\ \hline
+\end{tabular}
+\end{table}	
+
+\clearpage
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.50]{"original"}
+	\captionsetup{justification=centering}
+	\caption{Original Reference Image.} 
+	\label{orig}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.33]{"transform"}
+	\captionsetup{justification=centering}
+	\caption{Results of Transformation Compression using N-largest coding.} 
+	\label{xform}
+	\end{figure}
+	
+	\clearpage 
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.33]{"wavelet"}
+	\captionsetup{justification=centering}
+	\caption{Wavelet Compression Results.} 
+	\label{wavelet}
+	\end{figure}
+	
+	\clearpage
+	
+  	
+\section*{Discussion}
+
+\noindent According to Example 8.2, the entropy results calculated according to Table \ref{part1} were exactly correct.  See the Appendix for the results of the textbook problems 8.9-8.10.  For the most accurate reflection of the error values, the errors were taken for the double precision representations of the Image matrices , instead of the integer representations.  Doing this eliminated contribution of error due to roundoff or scaling.  Thus, the low values of the rms are due to the fact that these are relative to decimal value representations of the image, which are themselves typically smaller than 1.  The results for the rms and SNRms for each compression scheme are shown in Table \ref{part3}.  The rms (0.0279) was lower and the SNRms (263.4) was higher in the case of the DFT versus the rms (0.0437) and SNRms (106.7) for the DCT.  At smaller values of the subimage size (i.e., 8 by 8), the DFT implementations tend to be more accurate, according to Figure 8.23 in the 4th ed. Textbook.  Therefore, these results were not unexpected.  From my analysis, the N-largest bit allocation scheme became objectionable around N=1 or N=2.  For the sake of the report, the values were taken from N=1.  The rms was 0.0624 and the SNRms was 52.0.  The reconstructed images and there corresponding error masks are shown in Figure \ref{xform} .
+\\ \\
+\noindent The error results of the wavelet compression method are shown in Table \ref{part4}.  The decomposition scaling levels used were 2,3, and 4.  After 4 levels, the reconstruction is noticeably objectionable.  Also, the reconstructed images at each wavelet level with their corresponding error masks are shown in Figure \ref{wavelet}.   The rms increased at each subsequent level, while the SNRms decreased.  As the level gets higher, there are less coefficients in the approximation wavelet component, meaning upon upscale, the reconstructed image will have less detail than the higher resolution input image.  Therefore, the exhibited trend conforms to the expected behavior.  The 2 and 3 level compressions had similar rms and SNRms values to the 8-largest DCT  and 1-largest DCT schemes.  However, the 8-largest DFT outperformed both the wavelet and DCT compression schemes.  
+
+\clearpage
+\section*{Appendix - Theory Problems 8.9-10 Attachments}
+%\includepdf[scale=0.63, pages=-, pagecommand=\section*{Appendix} \subsection*{Problem 2 %Theory Problems 8.9-10 Attachment}]{book.pdf}
+\includepdf[scale=0.85, pages=-]{book.pdf}
+
+\clearpage
+
+\subsection*{Program Listings}
+
+\noindent \textbf{Script File Listing:}
+
+\noindent Main.m \\
+Problem1.m \\
+Problem3.m \\
+Problem4.m \\
+calc\_ entropy.m \\
+RMS.m \\
+snrms.m \\
+transform\_ compress.m
+find\_ files\_ from\_ pattern.m \\
+shift\_ image\_ values.m \\
+
+
+\noindent \textbf{Instructions to Run Scripts} \\
+
+\noindent The most important detail in setting up this project to be functional is to ensure that all of the supplied image files are stored in the same root directory as all of the *.m scripts.  The algorithms assume that the files will be in the same directory to run properly.  As previously mentioned, all the scripts should be placed in the same directory.  The sub-problems are solved in the scripts: Problem1.m, Problem3.m, and Problem4.m.  The Main.m script calls all routines in the same script, thus solving all sub-problems, while only needing to run one driver script.  Therefore, it is recommended to run the Main.m script to produce all of the figures at once.  If the image files are in a directory other than the root directory of the scripts, then the image filename(s) need to be supplied as strings as the argument to each of the ProblemX.m routines, where X represents the problem number (2 - 5).  The code function dependencies are the following scripts: freq\_ filter \_ image.m, get\_ freq\_ transfer \_ fun.m, parse\_ inputs.m, find\_ files\_ from\_ pattern.m, and shift\_ image\_ values.m.  All sub-dependent function scripts are also provided, namely in calc\_ entropy.m, RMS.m, snrms.m, and transform\_ compress.m.
+
+\end{document}
