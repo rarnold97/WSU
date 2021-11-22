@@ -8,11 +8,11 @@
 \begin{titlepage}
 
 \noindent
-\textbf{Project:} Image Compression \\
-\textbf{Project number:} 6\\
+\textbf{Project:} Boundary Extraction \& Segmentation \\
+\textbf{Project number:} 8 \& 9\\
 \textbf{Course number:} CEG 7580\\
 \textbf{Student:} Ryan Arnold \\
-\textbf{Date Due:} 11/01/21 \\
+\textbf{Date Due:} 11/29/21 \\
 \textbf{Date submitted:} 11/02/21 (was granted a 1 day extension)
 \vspace{24pt}
 %\end{center}
@@ -26,142 +26,202 @@
 \clearpage
 \section*{Abstract}
 
-\noindent The primary intent of this project was to explore different compression techniques and evaluate their performance based on root-mean-square error and mean-square signal-to-noise ratio.  The first method of compression explored was Huffman encoding, a lossless method.  Huffman encoding was explored using different quantization schemes, and applied to an input sequence to decode the constituent symbols.  The lossy methods explored were transform coding and wavelet coding.  In the case of transform coding, DCT and DFT transformations were applied in conjunction with N-largest coefficient retention.    The wavelet method involved reconstructing an input image at different wavelet decomposition levels, using only the approximation coefficients.  It was found that the DFT transform outperformed the DCT and wavelet methods.
+\noindent The primary intent of this project was to explore different feature extraction techniques as well as segmentation techniques.
+In Problem 1, global thresholding was applied to a sobel gradient filtered image.  This was applied to a kidney diagnostic image to 
+identify the boundaries of a blood vessel.  In Problem 2, an iterative thresholding algorithm that employed a function of means, was used to 
+optimize a global threshold level.  This was applied to a thumprint image to enhance the fingerprint pattern.  In Problem 3, the Otsu 
+thresholding method was implemented using a built-in Matlab function.  This was used to segment rings in the input image.  Problem 4 involved
+boundary extraction using erosion techniques dependent upon user-defined implementations of set logic.  This was used to extract the border
+of Abraham Lincoln on an image of a penny.  Finally, thresholding and erosion were applied to an image of a chicken breast with bones 
+to prime a built-in Matlab implementation of Connected Components.  The different segemented chicjen bone components were then isolated and counted.
 
 \clearpage
 
 \section*{Technical Discussion}
 
-\noindent Image entropy can be calculated according to Equation \eqref{entropy}.  This entails computing the $log_2$ of the sum of probabilities of distinct symbol occurrences.  Problem 1 entailed implementing this equation as a Matlab function.  In the textbook Problem 8.09, Huffman encoding was used to compress and decode a sequences of symbols.  The entropy was then computed and compared using different compression strategies, such has pair-wise quantization, and a run-length like (differences) quantization. For problem 8.09, The Huffman table from Fig 8.8 was used to decode a sequence of encoded symbols.
+\noindent Problem 1 required sobel gradient filtering for edge detection.  Sobel Gradient Kernels were defined using Eq.10-26 from the textbook. 
+Equation \eqref{gradient} was used to estimate the gradient while convolving the input image with the kernels, $g_x$ and $g_y$.
+Prior to this, the image was smoothened using a Gaussian filter.  Then, the image was thresholded using global thresholding, according to Equation \eqref{thresh} . The Threshold value was chosen by 
+examining the histogram of the gradient filtered image.  Problem 2 involved global thresholding without applying a gradient.  The 
+optimal value of the threshold was selected based on an iterative approach.  On each iteration, a new threshold was chosen as a
+function of the means of the regions in and outside of a seed threshold value.  Once the difference between the newly calculated 
+threshold and the previous threshold was less than a predefined tolerance, the iterative procedure concluded.  The newest value of 
+the global threshold was then used as the optimum threshold.  This was subsequently used to generate a binary mask and segment the input image.
+Problem 3 made us of Otsu's optimum thresholding method.  A built-in Matlab implementation was used for this, using \textit{otsuthresh()}.
 \\ \\
-\noindent Compression performance was evaluated for both discrete cosine and sine transformation schemes, using 8 by 8 non-overlapping blocks, and N-largest coding bit allocation.  In addition, N-largest coding was examined using a DCT transform implementation until an N was chosen where the reconstruction error became objectionable.  The performance was evaluated by respectively comparing root-mean-square $(rms)$ error and mean-square signal-to-noise ratio $(SNR_{ms})$.  These were computed according to Equations \eqref{rms} and \eqref{snrms}.  
-\\ \\
-\noindent Finally, wavelet coding was implemented using discrete wavelet transform algorithms provided through the Matlab Wavelet Toolbox.  To achieve maximal compression, all of the detail coefficients were truncated.  Therefore, the image was reconstructed using multi-level wavelet reconstruction, exclusively using the approximation coefficients.  The performance was evaluated using the $rms$ and $SNR_{ms}$
+\noindent As a prerequisite to Problem 4, a few set logic implementations were coded.  This included complementation, intersection, and differencing.
+These were then used to perform boundary extraction of the input image, which was a function of erosion and differencing.  The image
+was eroded according to Equation \eqref{boundary}.  The boundary extraction was subsequently applied to an input image of a coin to outline the 
+boundary of the president's head and shoulder profile.  Finally, in Problem 5, the Connected Components method was applied.  This combined
+several different methods to prime the input image to be used in the built-in Matlab implementation: \textit{bwconncomp()}.  The image was first
+thresholded using a Global Thresholding technique.  The threshold parameter was chosen by evaluating the input image histogram.  
+Once thresholded, the image was then eroded.  This result was then used as input to the Matlab Connected Components implementation.
+The output of this was a datastructure that contained the number of segments with their corresponding number of contained pixels.
+All of this information was then extracted from the data structure and tabulated for display.  
 
 
 \begin{equation}
-\label{entropy}
-\tilde{H} = \sum_{k=0}^{L-1} p_{r}(r_{k})log_2p_r(r_k) 
+g(x,y) \approx |g_x| + |g_y|
+\label{gradient}
 \end{equation}
 
 \begin{equation}
-\label{rms}
-e_{rms} = \left[ \frac{1}{MN} \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} [\hat{f(x,y)} - f(x,y)]^{2}\right ]^{1/2}
+\left\{
+\begin{array}{ll}
+	1 & \quad g(x,y) > T	\\
+	0 & \quad g(x,y) \leq T
+\end{array}
+\right.
+\label{thresh}
 \end{equation}
 
 \begin{equation}
-\label{snrms}
-SNR_{rms} = \frac{\sum_{x=0}^{M-1}\sum_{y=0}^{N-1} \hat{f}(x,y)^2}{\sum_{x=0}^{M-1}\sum_{y=0}^{N-1} [\hat{f}(x,y) - f(x,y)]^2}
+\beta (A) = A - (z|B_z \cap A^{c})
+\label{boundary}
 \end{equation}
+
+\begin{equation}
+X_k = (X_{k-1} \bigoplus B) \cap I \quad k=1,2,3...
+\label{conn}
+\end{equation}
+
 
 
 \clearpage
 
 \section*{Results}
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"gradient_hist"}
+	\captionsetup{justification=centering}
+	\caption{Problem 1: Histogram of Sobel Gradient.} 
+	\label{p1hist}
+	\end{figure}
 	
-\begin{table}[htbp]
-\centering
-\caption{Entropy Results from Problem 1.}
-\label{part1}
-\begin{tabular}{|c|c|c|}
-\hline
-Figure & Entropy (bits/pixel)& Textbook Entropy (bits/pixel)\\ \hhline{|=|=|=|}
-8.01(a)& 1.661 & 1.66\\ \hline
-8.01(b)& 8 & 8\\ \hline
-8.01(c)& 1.566 & 1.566\\ \hline
-\end{tabular}
-\end{table}	
-
-\begin{table}[htbp]
-\centering
-\caption{Error Results From Problem 3.}
-\label{part3}
-\begin{tabular}{|c|c|c|}
-\hline
-Description & RMS & SNRms\\ \hhline{|=|=|=|}
-DFT 8-largest& 0.0279 & 263.4\\ \hline
-DCT 8-largest& 0.0437 & 106.7\\ \hline
-DCT 1-largest& 0.0624 & 52.0 \\ \hline
-\end{tabular}
-\end{table}	
-
-\begin{table}[htbp]
-\centering
-\caption{Error Results From Problem 4.}
-\label{part4}
-\begin{tabular}{|c|c|c|}
-\hline
-Wavelet Decomposition Level & RMS & SNRms\\ \hhline{|=|=|=|}
-2& 0.0424 & 113.7\\ \hline
-3& 0.0624 & 52.0\\ \hline
-4& 0.0857 & 27.0 \\ \hline
-\end{tabular}
-\end{table}	
-
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.55]{"problem1"}
+	\captionsetup{justification=centering}
+	\caption{Problem 1: Edge Detection of Kidney Vessel.} 
+	\label{p1}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.55]{"problem2"}
+	\captionsetup{justification=centering}
+	\caption{Problem 2: Results of Iterative Global Thresholding on Fingerprint Image.} 
+	\label{p2}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.60]{"problem3"}
+	\captionsetup{justification=centering}
+	\caption{Problem 3: Results of Otsu Method Implementation.} 
+	\label{p3}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.60]{"problem4"}
+	\captionsetup{justification=centering}
+	\caption{Problem 4: Boundary Extraction using Erosion.} 
+	\label{p4}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.38]{"problem5_hist"}
+	\captionsetup{justification=centering}
+	\caption{Problem 5: Histogram of Input Image for Threshold Determination.} 
+	\label{p5hist}
+	\end{figure}
+	
+	\clearpage
+		
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.90]{"problem5"}
+	\captionsetup{justification=centering}
+	\caption{Problem 5: Results of Extraction of Connected Components.} 
+	\label{p5}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{table}[htbp]
+	\centering
+	\caption{Connected Components Results.}
+	\label{p5table}
+	\begin{tabular}{|c|c|}
+	\hline
+	
+Segment & Number of Contained Pixels \\ \hhline{|=|=|}
+1 & 11 \\ \hline
+2 & 9 \\ \hline
+3 & 9\\ \hline
+4 & 39\\ \hline
+5 & 133\\ \hline
+6 & 1\\ \hline
+7 & 1\\ \hline
+8 & 743\\ \hline
+9 & 7\\ \hline
+10 & 11\\ \hline
+11 & 11\\ \hline
+12 & 9\\ \hline
+13 & 9\\ \hline
+14 & 674\\ \hline
+15 & 85\\ \hline
+	\end{tabular}
+	\end{table}	
+	
 \clearpage
 
-	\begin{figure}[!htbp]
-	\centering
-	\includegraphics[scale=0.50]{"original"}
-	\captionsetup{justification=centering}
-	\caption{Original Reference Image.} 
-	\label{orig}
-	\end{figure}
-	
-	\clearpage
-	
-	\begin{figure}[!htbp]
-	\centering
-	\includegraphics[scale=0.33]{"transform"}
-	\captionsetup{justification=centering}
-	\caption{Results of Transformation Compression using N-largest coding.} 
-	\label{xform}
-	\end{figure}
-	
-	\clearpage 
-	
-	\begin{figure}[!htbp]
-	\centering
-	\includegraphics[scale=0.33]{"wavelet"}
-	\captionsetup{justification=centering}
-	\caption{Wavelet Compression Results.} 
-	\label{wavelet}
-	\end{figure}
-	
-	\clearpage
-	
-  	
 \section*{Discussion}
 
-\noindent According to Example 8.2, the entropy results calculated according to Table \ref{part1} were exactly correct.  See the Appendix for the results of the textbook problems 8.9-8.10.  For the most accurate reflection of the error values, the errors were taken for the double precision representations of the Image matrices , instead of the integer representations.  Doing this eliminated contribution of error due to roundoff or scaling.  Thus, the low values of the rms are due to the fact that these are relative to decimal value representations of the image, which are themselves typically smaller than 1.  The results for the rms and SNRms for each compression scheme are shown in Table \ref{part3}.  The rms (0.0279) was lower and the SNRms (263.4) was higher in the case of the DFT versus the rms (0.0437) and SNRms (106.7) for the DCT.  At smaller values of the subimage size (i.e., 8 by 8), the DFT implementations tend to be more accurate, according to Figure 8.23 in the 4th ed. Textbook.  Therefore, these results were not unexpected.  From my analysis, the N-largest bit allocation scheme became objectionable around N=1 or N=2.  For the sake of the report, the values were taken from N=1.  The rms was 0.0624 and the SNRms was 52.0.  The reconstructed images and there corresponding error masks are shown in Figure \ref{xform} .
+\noindent The results from Problem 1 are shown in Figure \ref{p1}.  The histogram that was used as the basis of the global threshold selection can be found in Figure \ref{p1hist}. The optimal sigma for the Gaussian smoothening function was selected to be 2, and the optimal threshold in decimal was 0.35.
+This successfully isolated the vessel in the kidney, with the exception of some artifacts. Further optimization of the smoothening filter and the threshold selection may
+have decreased the presence of such artifacts.  In Problem 2, the iterative approach led to an optimal value of 125.4 for the threshold.  Using this, 
+the fingerprint input image was successfully segmented.  The threshold value also makes sense according to the bimodal distributions present in the histogram in 
+Figure \ref{p2}.  Finally, in Problem 3, the matlab implementation of Otsu's method worked successfully.  The results can be seen in Figure \ref{p3}.
 \\ \\
-\noindent The error results of the wavelet compression method are shown in Table \ref{part4}.  The decomposition scaling levels used were 2,3, and 4.  After 4 levels, the reconstruction is noticeably objectionable.  Also, the reconstructed images at each wavelet level with their corresponding error masks are shown in Figure \ref{wavelet}.   The rms increased at each subsequent level, while the SNRms decreased.  As the level gets higher, there are less coefficients in the approximation wavelet component, meaning upon upscale, the reconstructed image will have less detail than the higher resolution input image.  Therefore, the exhibited trend conforms to the expected behavior.  The 2 and 3 level compressions had similar rms and SNRms values to the 8-largest DCT  and 1-largest DCT schemes.  However, the 8-largest DFT outperformed both the wavelet and DCT compression schemes.  
-
+\noindent In Problem 4, a 3 by 3 rectangle structuring element was generated and combined with the input image as inputs to the 
+built-in Matlab implementation of erosion.  The boundary extraction then combined this with set differencing, producing the output displayed in Figure \ref{p4}.
+The Figure indicates that the algorithm was implemented successfully, since the outline clearly shows the border of the President on the coin.
+Finally, in Problem 5, a global threshold parameter was applied to the input image.  The value of the parameter was chosen to be 203, 
+which was determined through a trial and error analysis of the input image histogram distribution.  The distribution is shown in Figure \ref{p5hist}.  The thresholded image was then eroded using 
+a similar implementation as Problem 4.  Finally, the output to this was passed into the built-in Matlab implementation of connected components.
+The count and pixel density of each segmented component are tabulated in Table \ref{p5table}.  The values agree with what was documented in the 4th ed. Textbook for Example 9.7.
+The processed results are displayed in Figure \ref{p5}.  It appears that the algorithm correctly identified the chicken bone fragments in the input image.
 \clearpage
-\section*{Appendix - Theory Problems 8.9-10 Attachments}
-%\includepdf[scale=0.63, pages=-, pagecommand=\section*{Appendix} \subsection*{Problem 2 %Theory Problems 8.9-10 Attachment}]{book.pdf}
-\includepdf[scale=0.85, pages=-]{book.pdf}
 
-\clearpage
-
+\section*{Appendix}
 \subsection*{Program Listings}
 
 \noindent \textbf{Script File Listing:}
 
 \noindent Main.m \\
 Problem1.m \\
+Problem2.m \\
 Problem3.m \\
 Problem4.m \\
-calc\_ entropy.m \\
-RMS.m \\
-snrms.m \\
-transform\_ compress.m
+Problem5.m \\
+set\_comp.m \\
+set\_ inter.m \\
+set\_ diff.m \\
+load\_ image.m \\
 find\_ files\_ from\_ pattern.m \\
-shift\_ image\_ values.m \\
-
 
 \noindent \textbf{Instructions to Run Scripts} \\
 
-\noindent The most important detail in setting up this project to be functional is to ensure that all of the supplied image files are stored in the same root directory as all of the *.m scripts.  The algorithms assume that the files will be in the same directory to run properly.  As previously mentioned, all the scripts should be placed in the same directory.  The sub-problems are solved in the scripts: Problem1.m, Problem3.m, and Problem4.m.  The Main.m script calls all routines in the same script, thus solving all sub-problems, while only needing to run one driver script.  Therefore, it is recommended to run the Main.m script to produce all of the figures at once.  If the image files are in a directory other than the root directory of the scripts, then the image filename(s) need to be supplied as strings as the argument to each of the ProblemX.m routines, where X represents the problem number (2 - 5).  The code function dependencies are the following scripts: freq\_ filter \_ image.m, get\_ freq\_ transfer \_ fun.m, parse\_ inputs.m, find\_ files\_ from\_ pattern.m, and shift\_ image\_ values.m.  All sub-dependent function scripts are also provided, namely in calc\_ entropy.m, RMS.m, snrms.m, and transform\_ compress.m.
+\noindent The most important detail in setting up this project to be functional is to ensure that all of the supplied image files are stored in the same root directory as all of the *.m scripts.  The algorithms assume that the files will be in the same directory to run properly.  As previously mentioned, all the scripts should be placed in the same directory.  The sub-problems are solved in the scripts: Problem1.m, Problem2.m, Problem3.m, Problem4.m, and Problem5.m.  The Main.m script calls all routines in the same script, thus solving all sub-problems, while only needing to run one driver script.  Therefore, it is recommended to run the Main.m script to produce all of the figures at once.  If the image files are in a directory other than the root directory of the scripts, then the image filename(s) need to be supplied as strings as the argument to each of the ProblemX.m routines, where X represents the problem number (1 - 5).  The code function dependencies are the following scripts: set\_ comp.m, set\_ inter.m, set\_ diff.m, find\_ files\_ from\_ pattern.m, and load\_ image.m.
 
 \end{document}

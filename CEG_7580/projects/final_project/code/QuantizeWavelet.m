@@ -1,38 +1,52 @@
-function qWavlet = QuantizeWavelet(wavelet, nl)
-% Accepts a 2d Wavelets basis kernel, and quantizes it using nl for the number of levels
-%
-% in
-% wavelet -> 2D - wavelet kernel array
-% nl -> number of quantization levels
-%
-% out
-% qWavelet - 2D quantized wavelet kernel used for SGW methods
+function qWavelet = QuantizeWavelet(wavelet, nl, varargin)
+    % Accepts a 2d Wavelets basis kernel, and quantizes it using nl for the number of levels
+    %
+    % in
+    % wavelet -> 2D - wavelet kernel array
+    % nl -> number of quantization levels
+    % *optional: plot the quantized wavelet for debugging and for reporting 
+    %
+    % out
+    % qWavelet - 2D quantized wavelet kernel used for SGW methods
 
-% Assuming that the real and imaginary components will be pre-separated
+    debugPlots = false  ; 
+    
+    if nargin > 2
+        debugPlots = varargin{1} ; 
+    end
 
-% separate into most positive and most negative 
-negative = wavelet(wavelet<0) ; 
-positive = wavelet(wavelet>=0) ; 
+    % Assuming that the real and imaginary components will be pre-separated
 
-% only need 1 invocation of max, since the data gets unrasterized using the logical indexing
-Aplus = max(positive) ;
--1*Aminus = max(abs(negative)) ; 
+    % separate into most positive and most negative
+    negative = wavelet(wavelet < 0);
+    positive = wavelet(wavelet >= 0);
 
-np = floor((nl-1)/2) ; 
-nn = floor((nl-1)/2) ; 
+    % only need 1 invocation of max, since the data gets unrasterized using the logical indexing
+    Aplus = max(positive);
+    Aminus = -1 * max(abs(negative));
 
-q_plus = zeros(1, np) ; 
-q_minus = zeros(1, nn) ;
+    np = floor((nl - 1) / 2);
+    nn = floor((nl - 1) / 2);
 
-for k = 1:np
-    q_plus(k) = 2*k *(Aplus/(2*np + 1)) ;
-    q_minus(k) = 2*k*(Aminus/(2*nn + 1)) ; 
-end
+    q_plus = zeros(1, np);
+    q_minus = zeros(1, nn);
 
-boundaries = [Aminus q_minus q_plus Amax] ;
+    for k = 1:np
+        q_plus(k) = 2 * k * (Aplus / (2 * np + 1));
+        q_minus(k) = 2 * k * (Aminus / (2 * nn + 1));
+    end
+    
+    range_spc = (Aplus - Aminus) / nl;  
+    levels = Aminus + range_spc : range_spc : Aplus - range_spc ; 
+    values = [flip(q_minus) 0 q_plus];
 
-qvals = (boundaries(1:end-1) + boundaries(2:end)) / 2 ; 
+    qWavelet = imquantize(wavelet, levels, values) ; 
+    %codeblock = [flip(q_minus) 0 q_plus];
 
-codeblock = [flip(q_minus) 0 q_plus] ; 
+    if debugPlots
+        figure();  
+        imshow(shift_image_values(qWavelet))
+        title('Quantized SGW')
+    end
 
 end
