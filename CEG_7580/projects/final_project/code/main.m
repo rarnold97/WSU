@@ -1,14 +1,33 @@
-%% First load the image data matrices 
+%% flush buffers, comment out as needed
+clc
+close('all')
 
-Images = LoadImages() ; 
+%% add script dependencies to path
+scriptFile = mfilename('fullpath') ; 
+[scriptPath, ~, ~] = fileparts(scriptFile) ; 
 
-for I_cell = Images 
+addpath(fullfile(scriptPath, 'fourier')) ; 
+addpath(fullfile(scriptPath, 'bookeeping')) ;
+addpath(fullfile(scriptPath, 'inputs')) ;
+addpath(fullfile(scriptPath, 'filtering')) ;
+addpath(fullfile(scriptPath, 'image_handling')) ;
 
-    % pre-converted to double through LoadImages()
-    I = I_cell{1} ; 
+%% set the input parameters and output data bookeeping data structure
 
-    %% first smoothen the image using a gaussian smoothing function
-    % using one sigma for now
-    I_smooth = imgaussfilt(I, 1) ; 
+% automatically loads the image data based on all image files contained in ../inputs
+params = gen_params() ; 
+% pass in the number of image datasets 
+out = init_out_struct(length(params.filenames)) ; 
 
-end
+%% apply filters and begin processing 
+
+% reference methods for comparison
+% the built-in methods apply thinning already 
+out = apply_ref_methods(params, out) ; 
+
+% apply the novel methods from the paper
+% this also includes the thinning stage 
+out = apply_paper_methods(params, out) ; 
+
+%% plot all the results and generate figures
+gen_figures(out) ;
