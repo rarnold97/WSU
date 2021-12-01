@@ -25,8 +25,10 @@ function filters = GenGWBank(params)
     filters = cell(1, length(frequencies));
 
     % going to create a figure demonstrating replication
-    fig = figure();
-    set(0, 'CurrentFigure', fig);
+    if showQuantPlots
+        fig = figure();
+        set(0, 'CurrentFigure', fig);
+    end
 
     for i = 1:length(frequencies)
 
@@ -37,11 +39,13 @@ function filters = GenGWBank(params)
         sgw = GaborImag(maskSize, omega, theta, 'sigma', sigma, 'asDeg', false);
         sgw_quant = QuantizeWavelet(sgw, nl, showQuantPlots);
         filters{i} = sgw_quant;
-
-        %plot results
-        subplot(2, 4, i)
-        imshow(shift_image_values(sgw_quant))
-        title(['SGW Kernel theta = ' num2str(theta) ' omega = ' num2str(omega)])
+        
+        if showQuantPlots
+            %plot results
+            subplot(2, 4, i)
+            imshow(shift_image_values(sgw_quant))
+            title(['SGW Kernel theta = ' num2str(theta) ' omega = ' num2str(omega)])
+        end
     end
 
 end

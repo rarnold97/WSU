@@ -9,7 +9,7 @@ function Gxy = freq_filter_image(I, P, Q, filterType, varargin)
     % modified to include notche filter as per request of project 7
     % added orientation and gabor frequency options for the final project
     options = struct('D0',50,'n',1,'center',[], 'pass_type', 'gaussian', 'notche_idx', [], 'return_transfer', false, ...
-        'orientation', 45.0, omega, 0.3*pi/3, 'Huv', []);
+        'orientation', 45.0, 'omega', 0.3*pi/3, 'Huv', []);
 
     options = parse_inputs(options, varargin) ;
 

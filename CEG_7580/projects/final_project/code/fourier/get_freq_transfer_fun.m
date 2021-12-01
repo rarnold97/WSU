@@ -19,7 +19,7 @@ function Huv =  get_freq_transfer_fun(u,v, filterType, varargin)
     if nargin >=1
         options = varargin{1};
     else 
-        options = struct('D0',50,'n',1,'center',[], 'pass_type', 'gaussian', 'notche_idx', [], 'return_transfer', false ...
+        options = struct('D0',50,'n',1,'center',[], 'pass_type', 'gaussian', 'notche_idx', [], 'return_transfer', false, ...
         'orientation', 45.0, 'omega', 0.3*pi/3, 'Huv', []);
     end
 
@@ -177,32 +177,17 @@ function Huv =  get_freq_transfer_fun(u,v, filterType, varargin)
         case 'gabor'
             % generate a gabor filter using the input angle and frequency, using the imaginary component
             omega = options.omega ; theta = options.orientation ; 
-            theta = deg2rad(theta) ; 
             sigma = options.D0 ; % this was used as sigma for previous projects, not reinventing the wheel here
-
+            %sigma = 0.075*sqrt(sum(center.^2)); 
             %D_sq = (u - center(1)).^2 + (v - center(2)).^2 ;
-            %arg = -1 * (D_sq ./ (2*sigma^2)) ;
-            %guass =  exp(arg) ; % gaussian component
-            %sinu = sin(omega.*(u.*cos(theta) + v.*sin(theta) ))%sinusoidal directional component
-            %Huv = gauss .* sinu ; 
-
-            % MATLABs way of doing it 
-            wavelength = 1 / omega ; 
-            BW = 1 ; % matlab default
-            aspect = 0.5 ; % matlab default
-
-            sigmaX = wavelength/pi*sqrt(log(2)/2)*(2^BW+1)/(2^BW-1) ; 
-            sigmaY = sigmaX ./ aspect ; 
-
-            Uprime = u .* cos(theta) - v .* sin(theta) ; 
-            Vprime = u .* sin(theta) + v .* cos(theta) ; 
-
-            sigmau = 1 / (2*pi*sigmaX) ; 
-            sigmav = 1 / (2*pi*sigmaY) ; 
-
-            A = 2 * pi * sigmaX * sigmaY ; 
-
-            Huv = A.*exp(-0.5*( ((Uprime-omega).^2)./sigmau^2 + Vprime.^2 ./ sigmav^2) ) ; 
+            D_sq = u.^2 + v.^2 ; 
+            arg = -1 * (D_sq ./ (2*sigma^2)) ;
+            gauss =  exp(arg) ; % gaussian component
+            %sinu = sin(omega.*((u-center(1)).*cos(theta) + (v-center(2)).*sin(theta) )) ;%sinusoidal directional component
+            sinu = sin(omega.*(u.*cos(theta) + v.*sin(theta) )) ;
+            Huv = gauss .* sinu ; 
+            Huv = fft2((-1).^(u+v).*Huv) ; % center the transfer function
+            %Huv = fft2(Huv) ; 
             
         otherwise 
             error('unrecognized input, please try again ...')
