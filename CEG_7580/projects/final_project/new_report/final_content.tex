@@ -1,0 +1,315 @@
+\documentclass[./rarnold_final_project.tex]{subfiles}
+
+\begin{document}
+
+% titlepage 
+
+
+\begin{titlepage}
+
+\noindent
+\textbf{Final Project:} Simplified Gabor Wavelet Edge Detection \\
+\textbf{Course number:} CEG 7580\\
+\textbf{Student:} Ryan Arnold \\
+\textbf{Date Due:} 12/08/21 \\
+\textbf{Date submitted:} 12/04/21
+\vspace{24pt}
+%\end{center}
+
+\noindent \textbf{Declaration Statement: }
+
+\noindent I hereby declare that this Report and the Matlab codes were written/prepared entirely by me based on my own work, and I have not used any material from another Project at another department/ university/college anywhere else, including Wright State. I also declare that I did not seek or receive assistance from any other person and I did not help any other person to prepare their reports or code.  The report mentions explicitly all sources of information in the reference list. I am aware of the fact that violation of these clauses is regarded as cheating and can result in invalidation of the paper with zero grade. Cheating or attempted cheating or assistance in cheating is reportable to the appropriate authority and may result in the expulsion of the student, in accordance with the University and College Policies.
+
+\end{titlepage}
+
+\tableofcontents
+
+\clearpage
+\section{Abstract}
+
+\noindent Many conventional edge detection algorithms are widely implemented and demonstrate accuracy, including the Canny, Sobel, and LoG (Laplacian of Gaussian) methods.  One drawback of these methods, however, is that they can only account for limited spatial directional information.  Some are also not suited for high-demand algorithms that require high performance for computer vision and artificial intelligence applications.  One approach to this problem is to employ a filter using the imaginary component of a Gabor Wavelet.  The Gabor Wavelet is a Gaussian function augmented by a sinusoidal component, and accounts for sampling frequency and orientation.  This filter alone, however, is not computationally efficient.  To combat this, a novel approach proposed by Jiang et al. involves the derivation of a Simplified Gabor Wavelet (SGW), that simultaneously  offers detection accuracy and offers computational efficiency \cite{main}.  In this report, I attempted to replicate the image processing results presented by Jiang et al., using their novel approach.
+
+\clearpage
+
+\section{Technical Discussion}
+
+\noindent The first step of this algorithm involved computing and quantizing Gabor Wavelet Kernels to create a filter bank.  The basis function driving the kernels was the 2D imaginary component of the Gabor wavelet, shown in Equation \eqref{gabor}.  
+
+\begin{equation}
+\label{gabor}
+G(x,y) = exp\left[ - \frac{x^2 + y^2}{2\sigma^2}\right ] \sin [\omega(x\cos\theta + y\sin\theta)]
+\end{equation}
+
+\noindent The Spatial Kernels are computed as a function of orientation ($\theta$), pixel sampling frequency ($\omega$), and Gaussian spread ($\sigma$); $f(\theta, \omega, \sigma)$.  Jiang et al., determined a set of eight pairs of orientation and frequency for optimal edge detection using the SGW approach.  The values of $\sigma$ can be manually varied and selected by maintaining $\sigma\omega \leq 1$. The pairs of orientation and frequency used for each of the eight kernels are shown in Table \ref{pairs} below \cite{main}.
+
+\begin{table}[htbp]
+\centering
+\caption{Orientation and frequency based Kernel Pairings.}
+\label{pairs}
+\begin{tabular}{|c|c|c|}
+\hline
+Kernel \# & Orientation (rad)& Frequency (pixel cycle / second)\\ \hhline{|=|=|=|}
+1& 0 & $0.3\pi$\\ \hline
+2& $\pi/4$ & $0.3\pi$\\ \hline
+3& $\pi/2$ & $0.3\pi$\\ \hline
+4& $3\pi/4$ & $0.3\pi$\\ \hline
+5& 0 & $0.5\pi$\\ \hline
+6& $\pi/4$ & $0.5\pi$\\ \hline
+7& $\pi/2$ & $0.5\pi$\\ \hline
+8& $3\pi/4$ & $0.5\pi$\\ \hline
+\end{tabular}
+\end{table}	
+
+\noindent After computing the kernels, they all had to be properly quantized in order to simplify the computations, and to pronounce the presences of step-like features that appear as edges.  The method of quantization involved computing the maximum and minimum values of a given kernel, and the magnitude of largest element of the kernel.  Given a number of input levels, $n_l$, the values of the quantization levels could be computed according to Equation \eqref{quant}, where $A$ is the maximum magnitude of the kernel \cite{main}.
+
+\begin{equation}
+\label{quant}
+q_{+}(k)=\frac{A}{2n_l + 1}\cdot 2k \:\:\:\:\:\:\: q_{-}(k) = - \frac{A}{2n_l + 1} \cdot 2k
+\end{equation}
+
+\noindent Once all the levels where computed, it was possible to map a quantized value to each region of the kernel using equally spaced points between the levels.  Furthermore, there would then only be a total of $n_l$ different values contained in the kernel.  Note that the center value is strategically set to zero.  See Figure \ref{1dquant} below for a schematic of this with a 1D analog Gabor Wavelet \cite{ref13}.
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.40]{"quant_space"}
+	\captionsetup{justification=centering}
+	\caption{1D Quantized Gabor Wavelet Scheme.} 
+	\label{1dquant}
+	\end{figure}
+
+\noindent After fully quantizing the kernels, I obtained the output shown in Figure \ref{kernels}.  This replicates Figure 3 in the reference paper \cite{main}. 
+
+\clearpage
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.38]{"kernels"}
+	\captionsetup{justification=centering}
+	\caption{Quantized Imaginary Components of Gabor Wavelet at orientation/frequency pairs.} 
+	\label{kernels}
+	\end{figure}
+	
+\noindent After quantizing all eight of the kernels, each kernel was separately applied to the input images via a spatial convolution, according to Equation \eqref{phi}.  The Features produced by the convolutions, denoted by $\phi_{\omega, \theta}$, were then compared to each other at each pixel position, $(x_c, y_c)$.  The max pixel across all 8 features was taken at each position, forming a composite feature array, $\phi^{''}_{\omega, \theta}$, according to Equation \eqref{phi_max}. 
+ 
+\begin{equation}
+\label{phi}
+\phi(x,y) = G(x,y) \otimes I(x,y)
+\end{equation}
+
+\begin{equation}
+\label{phi_max}
+\phi^{''}_{\omega , \theta} = max \left\lbrace \phi^{'}_{\omega_i, \theta_j}(x_c, y_c), i=0,1 \:\: and \:\: j=0,...,3 \right\rbrace
+\end{equation}
+
+\noindent An advantage of using the quantized kernels, is since most of the elements of the kernel are zero, the number of computational operations is greatly reduced.  For example, refering to the first kernel in the upper left of Figure \ref{kernels}, at $\omega=0.3\pi \: (0.94248)$, the operations are reduced to Equation \eqref{kernel1}.  Note, that since the kernels were symmetric, the magnitude of the positive and negative levels were the same, and are denoted by $q_1$ and $q_2$, and differ in sign only.  
+
+\begin{multline}
+\label{kernel1}
+\phi^{'}_{0,0}(x_c, y_c) = q_1(I(x_c - 1, y_c + 1) + I(x_c + 1, y_c + 1) - I(x_c - 1, y_c - 1) - (x_c + 1, y_c - 1)) \\
+ + q_2( I(x_c,y_c+1) - I(x_c, y_c-1))
+\end{multline}
+
+\noindent Once the composite feature array was collected, the data had to be thresholded.  This was done using a double threshold hysteresis-like scheme.  First, two thresholds were selected: T1 and T2.  T2 was by default set to be 2T1.  T1 was solved using the minimax method.  I modified this method, and used a constatn of proportionality to scale the threshold to each image dataset.  The minimax algorithm produced by Donoho et al. \cite{ref15}.  The method entailed referencing a precomputed lookup table, which provides a global threshold as a function of N, the number of input samples.  The thresholding approach was to select the two greatest feature matrices out of the eight.  let the maximum and second maximum be denoted as $\phi^{'}_1$ and $\phi^{'}_2$.  If $\phi^{'}_1 + \phi^{'}_2 > T2$, the pixel position is classified as a strong edge.  If both $\phi^{'}_1 < T1$ and $\phi^{'}_2 < T2$, then the pixel position is discarded and set to zero.  The remaining cases (at least one greater than T1), are set to weak edges.  The resulting matrix (containing either a zero, weak, or strong edge) was linked using a hysteresis approach.  If a weak pixel is surrounded by a strong edge within a pre-defined neighborhood mask (I employed an 8-connectivity square neighborhood), it is replaced as a strong edge.  If the weak edge is exclusively surrounded by weak edges and zeroes,  it is discarded.  The result becomes a binary mask, and can be plotted as an edge extracted image.  Figure \ref{hyst} below demonstrates this concept, where the white pixels are strong edges, the gray pixels are weak edges, and the black pixels are zeroes \cite{website}.
+
+\clearpage
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.55]{"hysteresis"}
+	\captionsetup{justification=centering}
+	\caption{Linking Weak and Strong Edges using Hysteresis Illustration \cite{website}.} 
+	\label{hyst}
+	\end{figure}
+
+\noindent The aforementioned methodolgy describes the SGW method.  The SGW Efficient algorithm outlined by Jiang et al., takes a slightly modified approach.  Jiang et al., mention that edges are most commonly detected when $\theta = 0 \: and \: \pi/2$ and $\omega = 0.3\pi$.  Therefore, only the kernels corresponding to those conditions were computed at first (i.e., $\phi^{'}_{0,0}$ and $\phi^{'}_{0,2}$, first and third kernels in the top row of Figure \ref{kernels}).  The phis were then compared to the thresholds: T1 and T2.  If both were less than T1, then the pixel was set to zero, and disregarded as being an edge.  If their sum exceeded T2, then the pixel was automatically marked as an edge.  If only one was greater than T1, then the other six kernels were considered, and the process was iterated until the pixel was categorized.  This made is so that the number of convolutions was reduced by not needing to use all eight kernels in most cases.  Both the conventional SGW and efficient SGW approaches are implemented in the SGW.m script included in the project code attachments.  
+\\ \\
+\noindent In addition to applying the SGW algorithms to the images, the effects of orientation, frequency, and number of quantization levels were examined.  Rather than assembling a filter bank combining all of these effects, filter banks were assembled by varying each effect exclusively.  This was useful in seeing how each parameter affected edge assessment. For accuracy and performance reference, other methods were used as a basis of edge detection comparison.  The other methods included: Gabor Wavelet Filtering, Canny Method, LoG (Laplacian of Gaussian) Method, and the Sobel Method.  Finally, the runtimes of the SGW and SGW Efficient method were computed and compared using Matlab's built-in \textit{tic()} and \textit{toc()} statements.  
+
+\clearpage
+
+\section{Results}
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"angles"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 4 in Journal Paper. (a) Original Image (b) $\theta=0$ (c) $\theta=\pi/4$, (d) $\theta=\pi/2$, (e) $\theta=3\pi/4$,(f) Maximum of SGW Features,(g) Results after Thresholding \cite{main}} 
+	\label{angles}
+	\end{figure}
+	
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"level_freq1"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 5 in Journal Paper. $\omega=0.3\pi$ (a) 3 quantization levels (b) 5 quantization levels (c) 7 quantization levels \cite{main}} 
+	\label{level_freq1}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"level_freq2"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 6 in Journal Paper.  Examination of number of levels and frequency. $\omega=0.5\pi$ (a) 3 quantization levels (b) 5 quantization levels (c) 7 quantization levels \cite{main}} 
+	\label{level_freq2}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"freq"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 7 in Journal Paper. Examination of frequency parameter. (a) $\omega=0.125\pi$ (b) $\omega=0.3\pi$ (c) $\omega=0.5\pi$ (d) $\omega=0.625\pi$ \cite{main}} 
+	\label{freq}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"thinned"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 8 in Journal Paper. Examination of frequency parameter. (a) GWs (Gabor Wavelets) (b) SGWs (c) SGWs efficient (d) GWs thinned (e) SGWs thinned (f) SGWs efficient thinned. \cite{main}} 
+	\label{thin}
+	\end{figure}	
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"parrots"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 10 in Journal Paper. Comparison to other methods (Parrots). (a) Original Image (b) Sobel Edge Detector (c) LoG Edge Detector (d) Canny Edge Detector (e) SGW Edge Detector. \cite{main}} 
+	\label{parrots}
+	\end{figure}
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"peppers"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 10 in Journal Paper. Comparison to other methods (Peppers). (a) Original Image (b) Sobel Edge Detector (c) LoG Edge Detector (d) Canny Edge Detector (e) SGW Edge Detector. \cite{main}} 
+	\label{peppers}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"lighthouse"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 10 in Journal Paper. Comparison to other methods (lighthouse). (a) Original Image (b) Sobel Edge Detector (c) LoG Edge Detector (d) Canny Edge Detector (e) SGW Edge Detector. \cite{main}} 
+	\label{lighthouse}
+	\end{figure}
+
+	\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.35]{"sailboat"}
+	\captionsetup{justification=centering}
+	\caption{Replication of Figure 10 in Journal Paper. Comparison to other methods (Sailboat). (a) Original Image (b) Sobel Edge Detector (c) LoG Edge Detector (d) Canny Edge Detector (e) SGW Edge Detector. \cite{main}} 
+	\label{sailboat}
+	\end{figure}
+	
+	\clearpage
+	
+\begin{table}[htbp]
+\centering
+\caption{Runtime Analysis Results, modeled after Table III \cite{main}.}
+\label{runtime}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Algorithm \# & 3 quant. levels (s)& 5 quant. levels (s) & 7 quant. levels (s)\\ \hhline{|=|=|=|=|}
+SGW (without efficient scheme)& 6.032 & 6.0339 & 6.019\\ \hline
+SGW (with efficient scheme)& 5.4248 & 5.4075 & 5.4198\\ \hline
+GW& \multicolumn{3}{c|}{5.9533} \\ \hline
+Percent Increase GW -> SGW eff.& 8.8777 \% & 9.1678 \% & 8.9621 \% \\ \hline
+\end{tabular}
+\end{table}	
+
+\section{Discussion}
+
+\noindent The primary Challenge in replicating the results produced by Jiang et al., was the fact that many of their parameters were merely suggestive, and not explicitly defined.  The two main examples of this were the selection of $\sigma$ (Gaussian spread) and $T1$.  Since an inequality was provided ($\sigma\omega \leq 1$), I was able to deduce proper values for $\sigma$.  However, for $T1$, they only mention they used the minimax method.  After investigating the minimax method, it entails returning a parameter ($\lambda^{*}$)\cite{ref13} as a function of the number of samples.  Although, how this parameter is to be used as a threshold was unclear.  There were no units attached to the parameter, and its magnitude was higher than all of the filter bank features ($\phi_{\omega,\theta}$) that I computed.  I made a compromise by instead scaling to the maximum value of the maximum feature ($\phi^{''}_{\omega,\theta}$).  I defined a proportional constant ($\alpha$), and then applied it to the max of the feature maximum to retrieve $T1$.  Through trial and error, I decided on using a value of $\alpha = 0.04$.  This obviously deviated from the minimax method, which likely caused slight deviation in my results compared to theirs \cite{main}.  However, from my observation, these deviations were minimal.
+\\ \\
+\noindent Figure \ref{angles} demonstrates how the SGW algorithm is able to discriminate between different orientation features within the input images.  It was evident from the results that there were edges that spanned the four orientations examined.  Figure \ref{level_freq1} and \ref{level_freq2} demonstrated how the number of quantization levels affected the results.  The tradeoff of quantization levels is that as the number of quantization levels increases, the accuracy increases at the expense of computational load.  The selection of the number of quantization levels depends on the application.  Both Figures \ref{level_freq1} and \ref{level_freq2} show that as the quantization levels increase, the edges become more granular and detailed. Figure \ref{freq} examines how the frequency parameter influenced the results.  Since frequency ($\omega$) is representative of the pixel sampling frequency, it was expected that as the frequency is increased, more detail would be extracted in the edges.  Going from left to right in Figure \ref{freq}, this was exactly the case.  In the the extreme case of $\omega=0.125\pi$, the edges were smudged and too thick.  Increasing the frequency made the edges thinner and subsequently more distinct.  Figure \ref{thin} shows the three different Gabor Wavelet approaches, coupled with the results of applying morphological thinning to the images.  Note that Jiang et al.'s thinning method was not defined, so I used the built-in Matlab methods.  Hence, my thinned results are slightly different than theirs.  Also, the results of my GW method compared to SGW were also slightly different.  I attribute this to the fact that I was not able to replicate their exact approach of using an fft/ifft and transfer function method \cite{main}. I instead applied a spatial convolution, and I attribute this to causing some dissimilarity.  It is also important to note that since the SGW methods are quantized, they are going to be inherently different from the non-quantized GW approach.
+Figures \ref{parrots} - \ref{sailboat} provide a summary of comparing the SGW approach to conventional reference methods (Canny, LoG, Sobel, and traditional GW filtering).  Overall, most of my figures closely resemble those in the reference paper, with the exception of a few discrepancies that I attempted to explain \cite{main}.  
+\\ \\
+\noindent The final piece of this project entailed performing a runtime analysis of the different algorithms.  This was the most difficult component to replicate, because there were so many factors that made it difficult to perform parallel comparisons.  For example, the reference paper was written in 2009, so the hardware was most likely drastically different.  It very well could have meant that my hardware may have had negligible runtime differences between methods due to the hardware alone.  Another issue I encountered was that I was using the Matlab \textit{nlfilter()} function.  This function produced a gui that displayed a loading bar.  The instancing of a graphical object may have confouned the runtimes.  In fact, I ommitted the Canny runtime because the built-in Matlab implementation did not have a loading bar, and in general, seemed to be more optimized than my code.  I realized this when the Canny runtimes were orders of magnitude smaller.  For the GW, SGW, and SGW Efficient results, I programmed them very similarly.  In spite of omitting the Canny runtimes, according to Table \ref{runtime}, I was able to show that the SGW Efficient scheme improved the runtime over the GW filtering method by about $9\%$.  My results were not the same as in \cite{main} for the runtime, so to get more consistency with that, I would have to reassess my approach of measuring the runtime and the programming environment.  Nevertheless, I still demonstrated that the efficient SGW scheme improved runtime.
+
+\clearpage
+
+\begin{thebibliography}{4}
+\bibitem{main}
+W. Jiang, K. Lam and T. Shen, "Efficient Edge Detection Using Simplified Gabor Wavelets," in IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics), vol. 39, no. 4, pp. 1036-1047, Aug. 2009, doi: 10.1109/TSMCB.2008.2011646.
+
+\bibitem{ref13}
+W. P. Choi, S. H. Tse, K. W. Wong, and K. M. Lam, “Simplified Gabor
+wavelets for human face recognition,” Pattern Recognit., vol. 41, no. 3,
+pp. 1186–1199, Mar. 2008.
+
+\bibitem{ref15}
+Ideal Spatial Adaptation by Wavelet Shrinkage Author ( s ): David L . Donoho and Iain M . Johnstone Published by : Oxford University Press on behalf of Biometrika Trust Stable URL : https://www.jstor.org/stable/2337118 REFERENCES Linked references are ava. (1994). 81(3), 425–455.
+
+\bibitem{website}
+Sahir, S. (2019). Canny Edge Detection Step by Step in Python — Computer Vision | by Sofiane Sahir | Towards Data Science. Towardsdatascience, 1–15. https://towardsdatascience.com/canny-edge-detection-step-by-step-in-python-computer-vision-b49c3a2d8123.
+\end{thebibliography}
+
+\clearpage
+
+\section{Appendix}
+
+\subsection*{Program Listings}
+
+\noindent \textbf{Script File Listing:}
+
+
+\subsection*{Project Root}
+\noindent Main.m \\
+\noindent gen\_ figures.m
+\subsubsection*{bookeeping}
+> Filter.m \\
+\indent > gen\_ file\_ list.m \\
+\indent > gen\_ params.m \\
+\indent > init\_ out\_ struct.m\\
+\indent > parse\_ inputs \\
+\indent > Scheme.m
+
+\subsubsection*{filtering}
+> apply\_ GW\_ filt.m \\
+\indent > apply\_ paper \_ methods.m \\
+\indent > apply\_ ref \_ methods.m \\
+\indent > double\_ thresh.m \\
+\indent > GaborImag.m \\
+\indent > apply\_ paper \_ methods.m \\
+\indent > gen\_ inter\_ data.m \\
+\indent > GenGWBank.m \\
+\indent > GetThresholds.m \\
+\indent > hysteresis\_ link.m \\
+\indent > hysteresis3d.m \\
+\indent > minimax.m \\
+\indent > QuantizeWavelet.m \\
+\indent > SGW.m
+
+\subsubsection*{fourier}
+> freq\_ filter\_ image.m \\
+\indent > get\_ freq\_ transfer\_ fun.m \\
+\indent > parse\_ inputs.m
+
+\subsubsection*{image\_ handling}
+> load\_ image.m \\
+\indent > LoadImages.m \\
+\indent > shift\_ image \_ values.m
+
+\subsubsection*{inputs}
+> find\_ files\_ from\_ pattern.m \\ 
+\indent > fish_test.tif \\
+\indent > Lenna.tif \\
+\indent > lighthouse.tif \\
+\indent > parrots.tif \\
+\indent > peppers.tif \\
+\indent > sailboat.tif
+
+\clearpage
+
+\noindent \textbf{Instructions to Run Scripts} \\
+
+\noindent The most important detail in setting up this project to be functional is to ensure that all of the supplied image files are stored in the same directory as the accompanying scripts.  The algorithms assume that the files will be in the same directory to run properly.  The Main.m script calls all routines in the same script.  Therefore, it is recommended to run the Main.m script to produce all of the figures at once.  The main concepts of the paper are implemented in the scripts listed under the \textbf{filtering} sub-section above.
+
+\end{document}
