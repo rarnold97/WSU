@@ -1,157 +1,135 @@
+# imports
+
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from sklearn.metrics import confusion_matrix
 from numpy import linalg as la
 import scipy
-from scipy import misc
+
 from sklearn.preprocessing import StandardScaler
 from scipy.linalg import eigh
-
-print('imports successful!')
-
-
-def get_fig_handles():
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    return fig, ax
+from scipy.spatial.distance import cdist
 
 
+from sklearn.cluster import KMeans
 
-def dependent_z(x, y):
-    return 0.1*np.power(x, 3) + np.square(y)
+def get_each_digit(image_data, labels):
+    unique_digit_sets = []
+    # loop through all the digits 0-9
+    for dig in range(9 + 1):
+        # find the indexes where the digits equal 0-9
+        indexes = np.where(labels == dig)[0]
+        # randomly select one of the digits that are the same technically
+        idx = np.random.choice(indexes, 1, replace=False)
+        # append the digit images to the list that will be of length 10
+        unique_digit_sets.append(np.array(image_data[idx, :]))
 
-def partial_derivative(func, var=0, point=[]):
-    args=point[:]
-    def wraps(x):
-        args[var] = x
-        return func(*args)
+    # stack together
+    unique_digit_sets = np.vstack(unique_digit_sets)
+    # we know that the digits will be 0-9 in order based on the above logic
+    new_labels = np.arange(10)
+    # data_set = np.vstack((unique_digit_sets, new_labels)).T
+    return unique_digit_sets, new_labels
 
-    return misc.derivative(wraps, point[var], dx=1e-6)
 
-def steepest_descent_3d(ax, x_start=1.5, y_start=1.8, eta=0.0001, maxIteration=100000, epsilon=0.0001):
+def k_means_clustering(image_data, image_labels, epsilon=0.01, max_iter=1000):
+    # first start by computing the initial clusters
+    # idx = np.sort(np.random.choice(len(image_data), k ,replace=False))
+    # centroids = image_data[idx, :]
+    centroids, sorted_labels = get_each_digit(image_data, image_labels)
 
-    correction = np.inf
-    num_iter = 0
+    n_datasets = centroids.shape[0]
 
-    tmp_z0 = dependent_z(x_start, y_start)
-    z_0 = None
-    x_0 = x_start
-    y_0 = y_start
+    k_by_1_corr_fn = cdist(image_data, centroids, 'seuclidean')
 
-    while (correction > epsilon) and (num_iter < maxIteration):
-        tmp_x_0 = x_0 - eta * partial_derivative(dependent_z, 0, [x_0, y_0])
-        tmp_y_0 = y_0 - eta * partial_derivative(dependent_z, 1, [x_0, y_0])
-        x_0 = tmp_x_0
-        y_0 = tmp_y_0
-        z_0 = dependent_z(x_0, y_0)
-        num_iter += 1
-        correction = np.abs(tmp_z0 - z_0)
-        tmp_z0 = z_0
+    points = np.array([np.argmin(i) for i in k_by_1_corr_fn])
+    old_cent = centroids
 
-        if (num_iter) == 1:
-            print("Value of X1: %s Value of Y1: %s" % (x_0, y_0))
-        elif (num_iter) == 2:
-            print("Value of X2: %s Value of Y2: %s" % (x_0, y_0))
+    # plot initial clusters
+    # fig1 = plt.figure()
+    # ax1 = fig1.add_subplot(111)
 
-        c = 'red' if not (correction > epsilon and num_iter < maxIteration) else 'blue'
+    for i in range(max_iter):
 
-    return x_0, y_0, z_0, num_iter
+        centroids = []
+        labels = []
+        for idx in range(n_datasets):
+            temp_cent = image_data[points == idx].mean(axis=0)
+            centroids.append(temp_cent)
 
-dzx = lambda x,y: 3*0.1*np.square(x)
-dzy = lambda x,y: 2*y
-fz = lambda x,y: 0.1*np.power(x, 3) + np.square(y)
-
-def p5_gradient(x_start, y_start, eta=0.0001, maxIter=100000, epsilon=0.0001):
-
-    wxcurr = x_start
-    wycurr = y_start
-    wxprev = x_start
-    wyprev = y_start
-
-    zprev = fz(x_start, y_start)
-    zcurr = None
-    n = 0
-
-    for n in range(maxIter):
-        wxcurr = wxprev - eta*dzx(wxprev, wyprev)
-        wycurr = wyprev - eta*dzy(wxprev, wyprev)
-
-        if n==0:
-            print("Value of X1: %s Y1: %s" % (wxcurr, wycurr))
-        elif n==1:
-            print("Value of X2: %s Y2: %s" % (wxcurr, wycurr))
-
-        zcurr = fz(wxcurr, wycurr)
-        error = np.abs(zcurr-zprev)
-
-        if error < epsilon:
+        centroids = np.vstack(centroids)
+        prior_estimation_error = np.sum(old_cent - centroids)
+        print("Prior estimation error: ", prior_estimation_error)
+        if np.abs(prior_estimation_error) < epsilon:
+            print("Required prior estimation error reached.")
             break
 
-        wxprev = wxcurr
-        wyprev = wycurr
-        zprev = zcurr
+        print("Iteration Number: ", i + 1)
 
-    return wxcurr, wycurr, zcurr, n+1
+        old_cent = centroids
+        k_by_1_corr_fn = cdist(x, centroids, 'seuclidean')
+        points = np.array([np.argmin(i) for i in k_by_1_corr_fn])
 
+    # do plotting here
 
-def problem5():
-
-    # make data
-    x = np.arange(-2, 2+0.01, 0.01)
-    y = np.arange(-2, 2+0.01, 0.01)
-
-    X, Y = np.meshgrid(x, y)
-    Z = 0.1*np.power(X, 3) + np.square(Y)
-
-    # plot the data
-    fig, ax = plt.subplots(subplot_kw={'projection': '3d'})
-    surf = ax.plot_surface(X, Y, Z, antialiased=False)
-
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    ax.set_title('Steepest Gradient Descent Minimization of Surface')
-
-    #xmin, ymin, zmin, num_iter = steepest_descent_3d(ax, epsilon=0.0001)
-    xmin, ymin, zmin, num_iter = p5_gradient(1.5, 1.8, eta=0.01)
-
-    return fig, ax, (xmin, ymin, zmin, num_iter)
+    return centroids
 
 
 
-def problem6(mnist):
-    N = 15000
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    data = x_train[0:N, :, :]
-    label = y_train[0:N]
-    #flatten the data
-    sample_data = data.reshape(data.shape[0], data.shape[1]*data.shape[2])
-    #centered_data = sample_data - np.outer(np.mean(sample_data, axis=1), np.ones(sample_data.shape[1]))
-    scaled_data = StandardScaler().fit_transform(sample_data)
+def cluster_digit_images(image_data_flat, n=10):
+    # fix seed to obtain initial centroids
+    np.random.seed(1)
 
-    covar_matrix = scaled_data.T @ scaled_data
-    values, vectors = eigh(covar_matrix)
-    vectors = vectors.T
+    kmeans = KMeans(n_clusters=n, init='random')
+    kmeans.fit(image_data_flat)
+    clusters = kmeans.predict(image_data_flat)
 
-    principle_comps = (vectors @ sample_data.T).T
+    return clusters
 
-    print('debug')
 
-if __name__=="__main__":
-    # load the mnist dataset
+def plot_clusters(clusters, image_data_flat, n=10, thin_factor=10):
+
+    for i in range(n):
+
+        # figure out the row of z corresponding to the ith cluster
+        row = np.where(clusters == i)[0]
+        num_elements = row.shape[0]
+
+        #divide by 20 to thin the number of images to be plotted
+        num_rows = np.floor((num_elements/n)/thin_factor)
+
+        print("displaying cluster: " + str(i))
+        print("With: " + str(num_elements) + " elements")
+
+        plt.figure(figsize=(10, 10))
+
+        # only going to plot every 20th element here
+        plot_element = 0
+        for r in range(0, num_elements, thin_factor):
+            plt.subplot(num_rows+1, n, plot_element+1)
+            image = image_data_flat[row[r], :]
+            image = image.reshape(28, 28)
+            plt.imshow(image)
+            plt.axis('off')
+            plot_element += 1
+
+        plt.show()
+
+
+
+
+
+if __name__ == "__main__":
     mnist = tf.keras.datasets.mnist
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
+    data_train = x_train.reshape(len(x_train), -1)
+    data_test = x_test.reshape(len(x_test), -1)
 
-    '''
-    #problem 5
-    fig, ax, results5 = problem5()
-    xmin, ymin, zmin, n_iter = results5
-    #ax.scatter(xmin, ymin, zmin, color='red')
-    ax.scatter(xmin, ymin, zmin, color='red')
-    #show plots
-    plt.show()
-    '''
+    labels_train = y_train
+    labels_test = y_test
 
-    # problem 6
-    problem6(mnist)
+    clusters = cluster_digit_images(data_test, 10)
+    plot_clusters(clusters, data_test, 10)
+
