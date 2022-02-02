@@ -10,6 +10,7 @@ import scipy
 from sklearn.preprocessing import StandardScaler
 from scipy.linalg import eigh
 from scipy.spatial.distance import cdist
+import matplotlib.colors as mcolors
 
 
 from sklearn.cluster import KMeans
@@ -121,6 +122,8 @@ def plot_clusters(clusters, image_data_flat, n=10, thin_factor=10):
 
 
 if __name__ == "__main__":
+
+    color_list = mcolors.get_named_colors_mapping()
     mnist = tf.keras.datasets.mnist
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
@@ -132,4 +135,6 @@ if __name__ == "__main__":
 
     clusters = cluster_digit_images(data_test, 10)
     plot_clusters(clusters, data_test, 10)
+
+
 
