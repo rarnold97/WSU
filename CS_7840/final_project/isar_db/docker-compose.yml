@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ryanm
+      MONGO_INITDB_ROOT_PASSWORD: 1997
+
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ryanm
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 1997
+      ME_CONFIG_MONGODB_URL: mongodb://ryanm:isar_ml@mongo:27017/
+
+  volumes:
+    - 'G:/BSI/WSU/CS_7840/final_project/img_database':/opt
