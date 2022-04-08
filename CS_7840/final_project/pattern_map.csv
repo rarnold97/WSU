@@ -1,0 +1,9 @@
+shape_id pattern_filename
+0,X:/isar_img_ml/static_patterns/cylinder_3m_height_1m_radius-March_31_2022-16_55_50_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/cylinder_3m_height_1m_radius.mdx
+1,X:/isar_img_ml/static_patterns/conic_3m_height_1m_radius-March_31_2022-16_54_22_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/conic_3m_height_1m_radius.mdx
+2,X:/isar_img_ml/static_patterns/conic_capped_height_2m-March_31_2022-16_56_42_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/conic_capped_height_2m.mdx
+3,X:/isar_img_ml/static_patterns/cone_cylinder_3m_height_1m_radius-April_06_2022-21_07_12_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/cone_cylinder_3m_height_1m_radius.mdx
+4,X:/isar_img_ml/static_patterns/double_conic_height_3m-March_31_2022-16_57_07_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/double_conic_height_3m.mdx
+5,X:/isar_img_ml/static_patterns/rocket_body-April_06_2022-21_07_46_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/rocket_body.mdx
+6,X:/isar_img_ml/static_patterns/cone_cylinder_fins_3m_height_1m_radius-April_06_2022-21_03_26_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/cone_cylinder_fins_3m_height_1m_radius.mdx
+7,X:/isar_img_ml/static_patterns/pbv_2m_height_1m_radius-April_06_2022-21_10_53_monostatic_pattern.hpt,X:/isar_img_ml/cad_model/pbv_2m_height_1m_radius.mdx

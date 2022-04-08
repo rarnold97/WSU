@@ -1,14 +1,21 @@
-version: '3.1'
+version: '3'
+
+volumes:
+  isar_mongo_data_container:
 
 services:
 
-  mongo:
+  db:
     image: mongo
-    restart: always
+    container_name: mongodb-isar
     environment:
       MONGO_INITDB_ROOT_USERNAME: ryanm
       MONGO_INITDB_ROOT_PASSWORD: 1997
-
+      MONGO_INITDB_DATABASE: isar_ml_data
+    ports:
+      - '27017:27017'
+    volumes:
+      - isar_mongo_data_container:/data/db
 
   mongo-express:
     image: mongo-express
@@ -16,9 +23,18 @@ services:
     ports:
       - 8081:8081
     environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb-isar
       ME_CONFIG_MONGODB_ADMINUSERNAME: ryanm
       ME_CONFIG_MONGODB_ADMINPASSWORD: 1997
-      ME_CONFIG_MONGODB_URL: mongodb://ryanm:isar_ml@mongo:27017/
-
-  volumes:
-    - 'G:/BSI/WSU/CS_7840/final_project/img_database':/opt
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+      ME_CONFIG_AUTH_USERNAME: ryanm
+      ME_CONFIG_AUTH_PASSWORD: 1997
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: ryanm
+      ME_CONFIG_BASICAUTH_PASSWORD: 1997
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017
+    depends_on:
+      - db
+    volumes:
+      - isar_mongo_data_container:/data/db

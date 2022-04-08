@@ -1,0 +1,2 @@
+# geodetic coordinates lat[deg]-lon[deg]-height[m]   (using Kennedy Space Launch Center)
+28.754799999999999 279.226 -16

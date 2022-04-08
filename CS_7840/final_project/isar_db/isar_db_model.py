@@ -2,21 +2,18 @@ import enum
 import numpy as np
 from pathlib import Path
 import json
+from json import JSONEncoder
 import base64
+import os
+from bson.objectid import ObjectId
+from typing import Union
 
 
-class NumpyEncoder(json.JSONEncoder):
+class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
-        """
-        if input object is a ndarray it will be converted into a dict holding dtype, shape and the data base64 encoded
-        """
         if isinstance(obj, np.ndarray):
-            data_b64 = base64.b64encode(obj.data)
-            return dict(__ndarray__=data_b64,
-                        dtype=str(obj.dtype),
-                        shape=obj.shape)
-        # Let the base class default method raise the TypeError
-        return json.JSONEncoder(self, obj)
+            return obj.tolist()
+        return JSONEncoder.default(self, obj)
 
 
 def json_numpy_obj_hook(dct):
@@ -34,7 +31,7 @@ def json_numpy_obj_hook(dct):
 
 # Overload dump/load to default use this behavior.
 def dumps(*args, **kwargs):
-    kwargs.setdefault('cls', NumpyEncoder)
+    kwargs.setdefault('cls', NumpyArrayEncoder)
     return json.dumps(*args, **kwargs)
 
 
@@ -44,7 +41,7 @@ def loads(*args, **kwargs):
 
 
 def dump(*args, **kwargs):
-    kwargs.setdefault('cls', NumpyEncoder)
+    kwargs.setdefault('cls', NumpyArrayEncoder)
     return json.dump(*args, **kwargs)
 
 
@@ -54,7 +51,7 @@ def load(*args, **kwargs):
 
 
 def encode_numpy(arr: np.ndarray):
-    return dumps(arr)
+    return json.dumps({"array": arr}, cls=NumpyArrayEncoder)
 
 
 def decode_numpy(record):
@@ -74,29 +71,32 @@ def serialize_dict(d: dict):
 class Models(enum.Enum):
     CYLINDER = 0
     CONIC = 1
-    ROCKET_BODY = 2
-    FAIRING = 3
-    PBV = 4
+    CONIC_CAPPED = 2
+    CONE_CYLINDER = 3
+    DBL_CONIC = 4
+    ROCKET_BODY = 5
+    FINS = 6
+    PBV = 7
 
 
 class SignatureRecord:
-    data_root: Path = Path("G:/WSU/CS_7840/final_project/img_database")
+    data_root: str = str("X:/isar_img_ml/signature_files")
 
     def __init__(self):
         # might be redundant, but want to ensure this gets serialized for use as Mongo document
         self.data_root = SignatureRecord.data_root
 
-        self.hwb_filename: Path = Path(SignatureRecord.data_root)
-        self.model_file: Path = Path('')
+        self.hwb_filename: str = os.path.join(self.data_root, "loc0_time1.hwb")
+        self.model_file: str = ""
         self.model_type: int = Models.CYLINDER.value
-        self.SNR: float = 30.0
-        self.motion_filename: Path = Path(SignatureRecord.data_root)
+        self.motion_filename: str = ""
         self.kappa: float = 0
         self.theta: float = 0
         self.spin_period: float = 0
         self.prec_period = 10.0  # seconds
+        self.simxml: str = ""
 
-        self.doc_id: int = 0
+        #self.doc_id: int = 0
 
     def get_dict(self) -> dict:
         data = vars(self)
@@ -105,7 +105,7 @@ class SignatureRecord:
 
 class CompImageRecord:
 
-    def __init__(self, image_data: np.ndarray, pid: int = 9999):
+    def __init__(self, image_data: np.ndarray, pid: Union[str, int] = '9999'):
         if len(image_data.shape) != 2:
             raise ValueError("Image must be specifically 2D ...")
 
@@ -113,12 +113,34 @@ class CompImageRecord:
         self.theta_i: float = 0
         self.lambda_i: float = 0
 
-        self.image_data: np.ndarray = image_data
+        self.SNR: float = 0
+
+        if np.iscomplex(image_data).any():
+            self.img = 20 * np.log10(np.abs(image_data.T))
+        else:
+            self.img: np.ndarray = image_data
+
         self.kappa_label: float = 0
         self.theta_label: float = 0
+        # default as cylinder
+        self.model_label: int = 0
 
-        self.parent_doc_id: int = pid
+        self.crossRangeStart: float = 0
+        self.crossRangeStop: float = 0
+        self.relRangeStart: float = 0
+        self.relRangeStop: float = 0
+
+        self.parent_doc_id: ObjectId = ObjectId(pid)
 
     def get_dict(self) -> dict:
         data = vars(self)
         return serialize_dict(data)
+
+    def setParId(self, id: str):
+        self.parent_doc_id = ObjectId(id)
+
+
+if __name__ == "__main__":
+    test = np.zeros((3,3))
+    js = encode_numpy(test)
+    print(js)

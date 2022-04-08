@@ -15,7 +15,7 @@ def rasterize_gates(sig_arr: np.ndarray,
                     offset_lens: np.ndarray,
                     n_obs: int):
 
-    n_cols = len(sig_arr) / n_obs
+    n_cols = int(len(sig_arr) / n_obs)
     rastered = np.zeros((n_obs, n_cols))
 
     for i, offset in enumerate(offsets):
@@ -68,6 +68,7 @@ def findNextPowerOf2(n):
         n = n & n - 1  # unset rightmost bit
 
     # `n` is now a power of two (less than `n`)
+
     # return next power of 2
     return n << 1
 
