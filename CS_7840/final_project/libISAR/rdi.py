@@ -243,7 +243,7 @@ class RDI:
             self._runImageProgram(i)
 
         self.__reset_iter()
-        print("Image Stack Generated")
+        #print("Image Stack Generated")
         plt.close('all')
 
 
@@ -415,7 +415,7 @@ if __name__ == "__main__":
     test_hwb = "G:/WSU/CS_7840/final_project/input_cfgs/seed/loc0_time1.hwb"
 
     rdi = RDI.from_hwb_file(test_hwb, False)
-    rdi.doPlots = False
+    rdi.doPlots = True
     rdi.generate_isar()
     rdi.animateRDFrames("loc0_time1.gif", True)
 

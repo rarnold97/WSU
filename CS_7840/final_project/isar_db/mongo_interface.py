@@ -44,6 +44,15 @@ class isar_db:
         cursor = self.img_data_col.find({})
         return [doc['_id'] for doc in cursor]
 
+    def get_isar_training_data(self):
+        return [x for x in self.img_data_col.find({}, {"img":1, "model_label": 1})]
+
+    def get_isar_docs(self, query: dict):
+        return self.img_data_col.find(query)
+
+    def get_sig_docs(self, query: dict):
+        return self.signature_col.find(query)
+
     @staticmethod
     def get_sig_query_template():
         q = {"hwb": None,

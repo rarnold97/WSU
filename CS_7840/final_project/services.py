@@ -2,6 +2,7 @@ from libISAR.ECP import ecp, plot_ecp
 from libISAR.rdi import RDI
 import sys
 import time
+from datetime import datetime
 from typing import Union, List, Tuple
 from pathlib import Path
 from BatchIsarGen.InitAngleNest import AngleNest, CreateAngleLevels, AngleID, mapModelstoPatterns
@@ -15,11 +16,16 @@ import time
 import numpy as np
 import warnings
 
+#from libISARML.logging import get_logger
+#logger = get_logger()
+
 # dont want to plot during the service
 RDI.doPlots = False
 
 # Creating lock for threads
 lock = threading.Lock()
+
+
 
 
 class SimThread(threading.Thread):
@@ -38,18 +44,26 @@ class SimThread(threading.Thread):
 
     def run(self):
         mongodb = isar_db()
+        output_log = []
 
         for minibatch in self.batch.mini_batches:
+            output_log.append("------------------------------------------\n")
+            output_log.append("Starting Run for: ShapeID - %s\n" % (self.batch.shape))
+
+            for key, item in minibatch.items():
+                output_log.append("Angle Type - " + str(key) + " Angle Value - " + str(item)+'\n')
 
             self._init(minibatch)
 
-            lock.acquire()
+            # figured out how to get the mastersim dump from the subprocess
+            # no longer need to lock the log file anymore
+            #lock.acquire()
 
             run_outputs = self.simGenerator.execute()
 
             time.sleep(0.001)
 
-            lock.release()
+            #lock.release()
 
             if run_outputs.exit_code != 0:
                 warnings.warn("Mastersim run failed, skipping ...")
@@ -68,13 +82,19 @@ class SimThread(threading.Thread):
             try:
                 db_entry = mongodb.insert_sig_record(sig_rec)
                 sig_record_id = db_entry.inserted_id
+                output_log.append("Singature Record: %s inserted to mongodb !\n" %(str(sig_record_id)))
 
                 ## do rdi stuff now
-                generate_isar_entry(mongodb, hwb_filename, minibatch, self.batch.snr, self.batch.shape, sig_record_id)
+                isar_entries = generate_isar_entry(mongodb, hwb_filename, minibatch, self.batch.snr, self.batch.shape, sig_record_id)
 
-                    # do database query here
+                [output_log.append("ISAR Record: %s with SNR: %s inserted to mongodb !\n"%(str(isar_entry_tup[0].inserted_id), isar_entry_tup[1])) for isar_entry_tup in isar_entries]
+                output_log.append("------------------------------------------\n")
+                print("".join(output_log))
+
+                #logger.info("".join(output_log))
+
             except Exception as e:
-                print("Error Performing DB inserstion on current batch: ", e)
+                warnings.warn("Error Performing DB inserstion on current batch: " + str(e))
                 continue
 
 
@@ -93,6 +113,7 @@ def generate_isar_entry(
     # generate noise free dataset
     rdi.generate_isar()
 
+    db_entries = []
     # process noisy images
     for snr in snr_arr:
         if not np.isclose(snr, 0):
@@ -116,7 +137,10 @@ def generate_isar_entry(
 
         isar_record.SNR = snr
 
-        db.insert_isar_record(isar_record)
+        entry = db.insert_isar_record(isar_record)
+        db_entries.append((entry, snr))
+
+    return db_entries
 
 
 def createThreads() -> List:
@@ -151,7 +175,25 @@ def test_thread():
 
     thread.run()
 
+
+def main():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Services Started at: ", current_time)
+
+    start_time = time.time()
+    # Threaded services entry point
+    main_service()
+
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Services Ended at: ", current_time)
+
+    print("----- Total Time elapsed: %s [seconds] -----" % (time.time() - start_time))
+
+
 if __name__ == "__main__":
 
-    test_thread()
-    #main_service()
+    ## UNCOMMENT TO DEBUG A SINGLE THREAD
+    #test_thread()
+    main()

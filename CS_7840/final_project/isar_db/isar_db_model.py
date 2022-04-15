@@ -79,6 +79,29 @@ class Models(enum.Enum):
     PBV = 7
 
 
+def get_model_string(model: Models):
+    string = ""
+
+    if model == Models.CYLINDER:
+        string = "Cylinder"
+    elif model == Models.CONIC:
+        string = "Conic"
+    elif model == Models.CONIC_CAPPED:
+        string = "Conic with Nose"
+    elif model == Models.CONE_CYLINDER:
+        string = "Cylinder with Forward Conic"
+    elif model == Models.DBL_CONIC:
+        string = "Double Conic"
+    elif model == Models.ROCKET_BODY:
+        string = "Rocket Body"
+    elif model == Models.FINS:
+        string = "Cylinder with Forward Conic and Fin Scatterers"
+    elif model == Models.PBV:
+        string = "Simple Post-Boost Vehicle"
+
+    return string
+
+
 class SignatureRecord:
     data_root: str = str("X:/isar_img_ml/signature_files")
 

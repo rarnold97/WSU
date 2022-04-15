@@ -4,6 +4,7 @@ from BatchIsarGen.cfgInject import probeMotionFile, probeMasterSimConfigFileMono
 from pathlib import Path
 from typing import Union, List
 import os
+import subprocess
 from libISAR.rdi import dotdict, RDI
 from BatchIsarGen.cfgInject import init_mastersim_params, init_motion_params, probeMotionFile, probeMasterSimConfigFileMono
 from BatchIsarGen.InitAngleNest import AngleID
@@ -48,6 +49,8 @@ class MastersimGenerate:
 
     startTime: float = 23900.0
     stopTime: float = 24000.0
+
+    LINES_FROM_END_OF_LOG = 5
 
     def __init__(self):
 
@@ -107,6 +110,17 @@ class MastersimGenerate:
         open(cls.logPath, 'w').close()
 
         return new_hwb_filename
+
+    @classmethod
+    def fetch_latest_hwb(cls, latest_filename) -> Path:
+        latest_filepath = Path(latest_filename)
+
+        new_file_loc = cls.hwbOutput / latest_filepath.name
+
+        new_hwb_filename = copy2(latest_filepath, new_file_loc)
+
+        return new_hwb_filename
+
 
     def _genCfg(self, minibatch: dotdict):
 
@@ -170,7 +184,13 @@ class MastersimGenerate:
         ## lock with a mutex here
         ret_code = -1
         try:
-            ret_code = os.system(cmd)
+            result = subprocess.run([str(self.masterSimExe), str(self.currentSimxml), '-nogui'],
+                                    stdout=subprocess.PIPE)
+            run_log = result.stdout.decode('utf-8')
+            each_line = run_log.split('\n')
+            filepath_line = each_line[-self.LINES_FROM_END_OF_LOG]
+            sig_file = filepath_line.split(' ')[-1].strip('\r')
+            ret_code = result.returncode
         except Exception as e:
             print("Error calling mastersim subprocess: ", e)
             return dotdict({
@@ -181,7 +201,7 @@ class MastersimGenerate:
             })
 
         # retrieve the lastest output file
-        new_hwb: Path = MastersimGenerate.fetch_sim_hwb_from_log()
+        new_hwb: Path = MastersimGenerate.fetch_latest_hwb(sig_file)
         #unlock mutex
 
         # convert paths to strings to make json encoding smoother
